@@ -12,7 +12,8 @@
 <br>
 
 ### 1. 순서
-- [변수(variable)](https://github.com/chaevivin/JavaScript_study/blob/main/variable.md)
+- [변수 (variable)](https://github.com/chaevivin/JavaScript_study/blob/main/variable.md)
+- [표현식과 문 (expression and statement)](https://github.com/chaevivin/JavaScript_study/blob/main/expression%26statement.md)
 
 <br>
 <br>
