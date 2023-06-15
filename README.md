@@ -14,6 +14,7 @@
 ### 1. 순서
 - [변수 (variable)](https://github.com/chaevivin/JavaScript_study/blob/main/variable.md)
 - [표현식과 문 (expression and statement)](https://github.com/chaevivin/JavaScript_study/blob/main/expression%26statement.md)
+- [데이터 타입 (data type)](https://github.com/chaevivin/JavaScript_study/blob/main/content/datatype.md)
 
 <br>
 <br>
