@@ -12,10 +12,11 @@
 <br>
 
 ### 1. 순서
-- [변수 (variable)](https://github.com/chaevivin/JavaScript_study/blob/main/variable.md)
-- [표현식과 문 (expression and statement)](https://github.com/chaevivin/JavaScript_study/blob/main/expression%26statement.md)
+- [변수 (variable)](https://github.com/chaevivin/JavaScript_study/blob/main/content/variable.md)
+- [표현식과 문 (expression and statement)](https://github.com/chaevivin/JavaScript_study/blob/main/content/expression%26statement.md)
 - [데이터 타입 (data type)](https://github.com/chaevivin/JavaScript_study/blob/main/content/datatype.md)
 - [연산자 (operator)](https://github.com/chaevivin/JavaScript_study/blob/main/content/operator.md)
+- [제어문 (control flow statement)](https://github.com/chaevivin/JavaScript_study/blob/main/content/control_flow_statement.md)
 
 <br>
 <br>
