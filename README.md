@@ -19,6 +19,7 @@
 - [제어문 (control flow statement)](https://github.com/chaevivin/JavaScript_study/blob/main/content/control_flow_statement.md)
 - [타입 변환과 단축 평가 (type conversion and short-circuit evaluation)](https://github.com/chaevivin/JavaScript_study/blob/main/content/type_conversion%26short-circuit_evaluation.md)
 - [객체 리터럴 (object literal)](https://github.com/chaevivin/JavaScript_study/blob/main/content/object_literal.md)
+- [원시 값과 객체의 비교 (primitives and objects)](https://github.com/chaevivin/JavaScript_study/blob/main/content/primitives%26objects.md)
 
 <br>
 <br>
