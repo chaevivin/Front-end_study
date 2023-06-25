@@ -1,5 +1,7 @@
 <div align="center">
 
+<br>
+
 ![5968292](https://github.com/chaevivin/JavaScript_study/assets/83055813/fc7e2cf4-e6b9-44d0-842b-55db5564d8e7) 
 
 <br>
@@ -20,6 +22,7 @@
 - [타입 변환과 단축 평가 (type conversion and short-circuit evaluation)](https://github.com/chaevivin/JavaScript_study/blob/main/content/type_conversion%26short-circuit_evaluation.md)
 - [객체 리터럴 (object literal)](https://github.com/chaevivin/JavaScript_study/blob/main/content/object_literal.md)
 - [원시 값과 객체의 비교 (primitives and objects)](https://github.com/chaevivin/JavaScript_study/blob/main/content/primitives%26objects.md)
+- [함수 (function)](https://github.com/chaevivin/JavaScript_study/blob/main/content/function.md)
 
 <br>
 <br>
