@@ -23,6 +23,7 @@
 - [객체 리터럴 (object literal)](https://github.com/chaevivin/JavaScript_study/blob/main/content/object_literal.md)
 - [원시 값과 객체의 비교 (primitives and objects)](https://github.com/chaevivin/JavaScript_study/blob/main/content/primitives%26objects.md)
 - [함수 (function)](https://github.com/chaevivin/JavaScript_study/blob/main/content/function.md)
+- [스코프 (scope)](https://github.com/chaevivin/JavaScript_study/blob/main/content/scope.md)
 
 <br>
 <br>
