@@ -25,6 +25,7 @@
 - [함수 (function)](https://github.com/chaevivin/JavaScript_study/blob/main/content/function.md)
 - [스코프 (scope)](https://github.com/chaevivin/JavaScript_study/blob/main/content/scope.md)
 - [전역 변수의 문제점 (problems with global variable)](https://github.com/chaevivin/JavaScript_study/blob/main/content/problems_with_global_variable.md)
+- [let, const 키워드와 블록 레벨 스코프 (let, const keyword and block level scope)](https://github.com/chaevivin/JavaScript_study/blob/main/content/let%26const%26block_level_scope.md)
 
 <br>
 <br>
