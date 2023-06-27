@@ -24,6 +24,7 @@
 - [원시 값과 객체의 비교 (primitives and objects)](https://github.com/chaevivin/JavaScript_study/blob/main/content/primitives%26objects.md)
 - [함수 (function)](https://github.com/chaevivin/JavaScript_study/blob/main/content/function.md)
 - [스코프 (scope)](https://github.com/chaevivin/JavaScript_study/blob/main/content/scope.md)
+- [전역 변수의 문제점 (problems with global variable)](https://github.com/chaevivin/JavaScript_study/blob/main/content/problems_with_global_variable.md)
 
 <br>
 <br>
