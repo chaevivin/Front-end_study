@@ -28,6 +28,7 @@
 - [let, const 키워드와 블록 레벨 스코프 (let, const keyword and block level scope)](https://github.com/chaevivin/JavaScript_study/blob/main/content/let%26const%26block_level_scope.md)
 - [프로퍼티 어트리뷰트 (property attribute)](https://github.com/chaevivin/JavaScript_study/blob/main/content/property_attribute.md)
 - [생성자 함수에 의한 객체 생성 (object creation by constructor)](https://github.com/chaevivin/JavaScript_study/blob/main/content/object_creation_by_constructor.md)
+- [함수와 일급 객체 (function and first-class object)](https://github.com/chaevivin/JavaScript_study/blob/main/content/function%26first-class_object.md)
 
 <br>
 <br>
