@@ -29,6 +29,7 @@
 - [프로퍼티 어트리뷰트 (property attribute)](https://github.com/chaevivin/JavaScript_study/blob/main/content/property_attribute.md)
 - [생성자 함수에 의한 객체 생성 (object creation by constructor)](https://github.com/chaevivin/JavaScript_study/blob/main/content/object_creation_by_constructor.md)
 - [함수와 일급 객체 (function and first-class object)](https://github.com/chaevivin/JavaScript_study/blob/main/content/function%26first-class_object.md)
+- [프로토타입 (prototype)](https://github.com/chaevivin/JavaScript_study/blob/main/content/prototype.md)
 
 <br>
 <br>
