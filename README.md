@@ -31,6 +31,7 @@
 - [함수와 일급 객체 (function and first-class object)](https://github.com/chaevivin/JavaScript_study/blob/main/content/function%26first-class_object.md)
 - [프로토타입 (prototype)](https://github.com/chaevivin/JavaScript_study/blob/main/content/prototype.md)
 - [strict mode](https://github.com/chaevivin/JavaScript_study/blob/main/content/strict_mode.md)
+- [빌트인 객체 (built-in object)](https://github.com/chaevivin/JavaScript_study/blob/main/content/built-in_object.md)
 
 <br>
 <br>
