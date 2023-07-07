@@ -32,6 +32,7 @@
 - [프로토타입 (prototype)](https://github.com/chaevivin/JavaScript_study/blob/main/content/prototype.md)
 - [strict mode](https://github.com/chaevivin/JavaScript_study/blob/main/content/strict_mode.md)
 - [빌트인 객체 (built-in object)](https://github.com/chaevivin/JavaScript_study/blob/main/content/built-in_object.md)
+- [this](https://github.com/chaevivin/JavaScript_study/blob/main/content/this.md)
 
 <br>
 <br>
