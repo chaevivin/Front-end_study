@@ -33,6 +33,7 @@
 - [strict mode](https://github.com/chaevivin/JavaScript_study/blob/main/content/strict_mode.md)
 - [빌트인 객체 (built-in object)](https://github.com/chaevivin/JavaScript_study/blob/main/content/built-in_object.md)
 - [this](https://github.com/chaevivin/JavaScript_study/blob/main/content/this.md)
+- [실행 컨텍스트 (execution context)](https://github.com/chaevivin/JavaScript_study/blob/main/content/execution_context.md)
 
 <br>
 <br>
