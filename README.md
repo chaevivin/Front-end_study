@@ -36,6 +36,7 @@
 - [실행 컨텍스트 (execution context)](https://github.com/chaevivin/JavaScript_study/blob/main/contents/execution_context.md)
 - [클로저 (closure)](https://github.com/chaevivin/JavaScript_study/blob/main/contents/closure.md)
 - [클래스 (class)](https://github.com/chaevivin/JavaScript_study/blob/main/contents/class.md)
+- [ES6 함수의 추가 기능 (additional features of ES6 function)](https://github.com/chaevivin/JavaScript_study/blob/main/contents/additional_features_of_ES6_function.md)
 
 <br>
 <br>
