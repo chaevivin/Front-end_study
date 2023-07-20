@@ -373,3 +373,650 @@ console.log(Object.getOwnPropertyDescriptors([1, 2, 3]));
   // length 프로퍼티 자동 갱신
   console.log(arr.length);    // 2
   ```
+
+<br>
+
+## 8. 배열 메서드
+- 배열 메서드는 결과물을 반환하는 패턴이 두 가지
+  - **원본 배열(배열 메서드를 호출하는 배열, 즉 배열 메서드의 구현체 내부에서 this가 가리키는 객체)을 직접 변경하는 메서드**
+  - **원본 배열을 직접 변경하지 않고 새로운 배열을 생성하여 반환하는 메서드**
+- ES5부터 도입된 배열 메서드는 대부분 원본 배열을 직접 변경하지 않지만 초창기 배열 메서드는 원본 배열을 직접 변경하는 경우가 많음
+- 원본 배열을 직접 변경하는 메서드는 외부 상태를 직접 변경하는 부수 효과가 있으므로 사용할 때 주의
+- 가급적 원본 배열을 직접 변경하지 않는 메서드를 사용
+
+<br>
+
+### 8.1. Array.isArray
+- Array 생성자 함수의 정적 메서드
+- 전달된 인수가 배열이면 true, 배열이 아니면 false 반환
+  ```js
+  // true
+  Array.isArray([]);
+  Array.isArray([1, 2]);
+  Array.isArray(new Array());
+
+  // false
+  Array.isArray();
+  Array.isArray({});
+  Array.isArray(null);
+  Array.isArray(undefined);
+  Array.isArray(1);
+  Array.isArray('Array');
+  Array.isArray(true);
+  Array.isArray(false);
+  Array.isArray({ 0: 1, length: 1 });
+  ```
+
+<br>
+
+### 8.2. Array.prototype.indexOf
+- 원본 배열에서 인수로 전달된 요소를 검색하여 인덱스 반환
+- 원본 배열에 인수로 전달된 요소와 중복되는 요소가 여러 개 있다면 첫 번째로 검색된 인덱스 반환
+- 원본 배열에 인수로 전달한 요소가 존재하지 않으면 -1 반환
+- 두 번째 인수는 검색을 시작할 인덱스
+  - 두 번째 인수를 생략하면 처음부터 검색
+  ```js
+  const arr = [1, 2, 2, 3];
+
+  arr.indexOf(2);    // 1
+  arr.indexOf(4);    // -1
+  arr.indexOf(2, 2);    // 2
+  ```
+- indexOf 메서드는 배열에 특정 요소가 존재하는지 확인할 때 유용
+  ```js
+  const foods = ['apple', 'banana', 'orange'];
+
+  if (foods.indexOf('orange') === -1) {
+    // foods 배열에 orange가 존재하지 않으면 요소 추가
+    foods.push('orange');
+  }
+
+  console.log(foods);    // ["apple", "banana", "orange"]
+  ```
+- indexOf 메서드 대신 ES7에 도입된 Array.prototype.includes 메서드를 사용하면 가독성이 더 좋음
+  ```js
+  const foods = ['apple', 'banana', 'orange'];
+
+  if (!foods.includes('orange')) {
+    // foods 배열에 orange가 존재하지 않으면 요소 추가
+    foods.push('orange');
+  }
+
+  console.log(foods);    // ["apple", "banana", "orange"]
+  ```
+
+<br>
+
+### 8.3. Array.prototype.push
+- 인수로 전달받은 모든 값을 원본 배열의 마지막 요소로 추가하고 변경된 length 프로퍼티 값을 반환
+  ```js
+  const arr = [1, 2];
+
+  let result = arr.push(3, 4);
+  console.log(result);    // 4
+
+  console.log(arr);    // [1, 2, 3, 4]
+  ```
+- push 메서드는 성능 면에서 좋지 않음
+  - 마지막 요소로 추가할 요소가 하나뿐이라면 length 프로퍼티를 사용하여 배열의 마지막에 요소 직접 추가 -> push보다 빠름
+  ```js
+  const arr = [1, 2];
+
+  arr[arr.length] = 3;
+  console.log(arr);    // [1, 2, 3]
+  ```
+- push 메서드는 원본 배열을 직접 변경
+  - push 메서드보다 ES6의 스프레드 문법 사용 권장
+  - 스프레드 문법을 사용하면 함수 호출 없이 표현식으로 마지막에 요소 추가 가능하며 부수 효과 X
+  ```js
+  const arr = [1, 2];
+
+  const newArr = [...arr, 3];
+  console.log(newArr);    // [1, 2, 3]
+  ```
+
+<br>
+
+### 8.4. Array.prototype.pop
+- 원본 배열에서 마지막 요소를 제거하고 제거한 요소를 반환
+- 원본 배열이 빈 배열이면 undefined 반환
+- 원본 배열 직접 변경
+  ```js
+  const arr = [1, 2];
+
+  let result = arr.pop();
+  console.log(result);    // 2
+
+  console.log(arr);    // [1]
+  ```
+- pop 메서드와 push 메서드를 사용하면 스택 구현 가능
+  - 스택 : 데이터를 마지막에 밀어 넣고, 마지막에 밀어 넣은 데이터를 먼저 꺼내는 후입 선출(LIFO - Last In First Out)방식의 자료구조
+  - 푸시(push) : 스택에 데이터를 밀어 넣는 것
+  - 팝(pop) : 스택에서 데이터 꺼내는 것
+  - 스택을 생성자 함수로 구현
+    ```js
+    const Stack = (function () {
+      function Stack(array = []) {
+        if (!Array.isArray(array)) {
+          throw new TypeError(`${array} is not an array`);
+        }
+        this.array = array;
+      }
+
+      Stack.prototype = {
+        constructor: Stack,
+        push(value) {
+          return this.array.push(value);
+        },
+        pop() {
+          return this.array.pop();
+        },
+        entries() {
+          retur [...this.array];    // 스택의 복사본 배열 반환
+        }
+      };
+
+      return Stack;
+    }());
+
+    const stack = new Stack([1, 2]);
+    console.log(stack.entries());    // [1, 2]
+
+    stack.push(3);
+    console.log(stack.entries());    // [1, 2, 3]
+
+    stack.pop();
+    console.log(stack.entries());    // [1, 2]
+    ```
+  - 스택을 클래스로 구현
+    ```js
+    class Stack {
+      #array;    // private class member
+
+      constructor(array = []) {
+        if (!Array.isArray(array)) {
+          throw new TypeError(`${array} is not an array`);
+        }
+        this.array = array;
+      }
+
+      push(value) {
+        return this.#array.push(value);
+      }
+
+      pop() {
+        return this.#array.pop();
+      }
+
+      entries() {
+        return [...this.#array];
+      }
+    }
+
+    const stack = new Stack([1, 2]);
+    console.log(stack.entries());    // [1, 2]
+
+    stack.push(3);
+    console.log(stack.entries());    // [1, 2, 3]
+
+    stack.pop();
+    console.log(stack.entries());    // [1, 2]
+    ```
+
+<br>
+
+### 8.5. Array.prototype.unshift
+- 인수로 전달받은 모든 값을 원본 배열의 선두에 요소로 추가하고 변경된 length 프로퍼티 값을 반환
+  ```js
+  const arr = [1, 2];
+
+  let result = arr.unshift(3, 4);
+  console.log(result);    // 4
+
+  console.log(arr);    // [3, 4, 1, 2]
+  ```
+- unshift 메서드는 원본 배열 직접 변경
+  - 스프레드 문법 사용 권장
+  ```js
+  const arr = [1, 2];
+
+  const newArr = [3, 4, ...arr];
+  console.log(newArr);    // [3, 4, 1, 2]
+  ```
+
+<br>
+
+### 8.6. Array.prototype.shift
+- 원본 배열에서 첫 번재 요소를 제거하고 제거한 요소를 반환
+- 원본 배열이 빈 배열이면 undefined 반환
+- shift 메서드는 원본 배열 직접 변경
+  ```js
+  const arr = [1, 2];
+
+  let result = arr.shift();
+  console.log(result);    // 1
+
+  console.log(arr);    // [2]
+  ```
+- shift 메서드와 push 메서드를 사용하면 큐 구현 가능
+  - 큐 : 데이터를 마지막에 밀어 넣고, 처음 데이터, 즉 가장 먼저 밀어 넣은 데이터를 먼저 꺼내는 선입 선출(FIFO - First In First Out) 방식의 자료구조
+  - 큐를 생성자 함수로 구현
+    ```js
+    const Queue = (function() {
+      function Queue(array = []) {
+        if (!Array.isArray(array)) {
+          throw new TypeError(`${array} is not an array.`);
+        }
+        this.aray = array;
+      }
+
+      Queue.prototype = {
+        constructor: Queue,
+        enqueue(value) {
+          return this.array.push(value);
+        },
+        dequeue() {
+          return this.array.shift();
+        },
+        entries() {
+          return [...this.array];
+        }
+      };
+
+      return Queue;
+    }());
+
+    const queue = new Queue([1, 2]);
+    console.log(queue.entries());    // [1, 2]
+
+    queue.enqueue(3);
+    console.log(queue.entries());    // [1, 2, 3]
+
+    queue.dequeue();
+    console.log(queue.entries());    // [2, 3]
+    ```
+  - 큐를 클래스로 구현
+    ```js
+    class Queue {
+      #array;    // private class member
+
+      constructor(array = []) {
+        if (!Array.isArray(array)) {
+          throw new TypeError(`${array} is not an array.`);
+        }
+        this.#array = array;
+      }
+
+      enqueue(value) {
+        return this.#array.push(value);
+      }
+
+      dequeue() {
+        return this.#array.shift();
+      }
+
+      entries() {
+        return [...this.#array];
+      }
+    }
+
+    const queue = new Queue([1, 2]);
+    console.log(queue.entries());    // [1, 2]
+
+    queue.enqueue(3);
+    console.log(queue.entries());    // [1, 2, 3]
+
+    queue.dequeue();
+    console.log(queue.entries());    // [2, 3]
+    ```
+
+<br>
+
+### 8.7. Array.prototype.concat
+- 인수로 전달된 값들(배열 또는 원시값)을 원본 배열의 마지막 요소로 추가한 새로운 배열을 반환
+- 인수로 전달한 값이 배열인 경우, 배열을 해체하여 새로운 배열의 요소로 추가
+- 인수 여러 개 전달 가능. 
+- 원본 배열 변경 X
+  ```js
+  const arr1 = [1, 2];
+  const arr2 = [3, 4];
+
+  let result = arr1.concat(arr2);
+  console.log(result);    // [1, 2, 3, 4]
+
+  result = arr1.concat(3);
+  console.log(result);    // [1, 2, 3]
+
+  result = arr1.concat(arr2, 5);
+  console.log(result);    // [1, 2, 3, 4, 5]
+
+  console.log(arr1);    // [1, 2]
+  ```
+- push와 unshift 메서드는 concat 메서드로 대체 가능하지만 차이 존재
+  - push와 unshift 메서드는 원본 배열을 직접 변경하지만 concat 메서드는 원본 배열을 변경하지 않고 새로운 배열을 반환
+  - push와 unshift 메서드를 사용할 경우 원본 배열을 반드시 변수에 저장해야 하고, concat 메서드를 사용할 경우 반환값을 반드시 변수에 할당 
+  ```js
+  const arr1 = [3, 4];
+
+  arr1.unshift(1, 2);
+  console.log(arr1);    // [1, 2, 3, 4]
+
+  arr1.push(5, 6);
+  console.log(arr1);    // [1, 2, 3, 4, 5, 6]
+
+  const arr2 = [3, 4];
+
+  // arr1.unshift(1, 2) 대체
+  let result = [1, 2].concat(arr2);
+  console.log(result);    // [1, 2, 3, 4]
+
+  // arr1.push(5, 6) 대체
+  result = result.concat(5, 6);
+  console.log(result);    // [1, 2, 3, 4, 5, 6]
+  ```
+  - 인수로 전달받은 값이 배열인 경우 push와 unshift 메서드는 배열을 그대로 원본 배열의 마지막/첫 번째 요소로 추가하지만 concat 메서드는 인수로 전달받은 배열을 해체하여 마지막 요소로 추가
+  ```js
+  const arr = [3, 4];
+
+  arr.unshift([1, 2]);
+  arr.push([5, 6]);
+  console.log(arr);    // [[1, 2], 3, 4, [5, 6]]
+
+  let result = [1, 2].concat([3, 4]);
+  result = result.concat([5, 6]);
+
+  console.log(result);    // [1, 2, 3, 4, 5, 6]
+  ```
+- concat 메서드는 ES6의 스프레드 문법으로 대체 가능
+  - push/unsfhit, concat 메서드를 사용하는 대신 ES6의 스프레드 문법을 이관성 있게 사용하는 것을 권장
+  ```js
+  let result = [1, 2].concat([3, 4]);
+  console.log(result);    // [1, 2, 3, 4]
+
+  result = [...[1, 2], ...[3, 4]];
+  console.log(result);    // [1, 2, 3, 4]
+  ```
+
+<br>
+
+### 8.8. Array.prototype.splice
+- 원본 배열의 중간에 요소를 추가하거나 중간에 있는 요소를 제거하는 경우 사용
+- splice 메서드는 3개의 매개변수가 있으며 원본 배열을 직접 변경
+  - start
+    - 원본 배열의 요소를 제거하기 시작할 인덱스
+    - start만 지정하면 원본 배열의 start부터 모든 요소 제거
+    - start가 음수인 경우 배열의 끝에서 인덱스를 나타냄 (start가 -1이면 마지막 요소, -n이면 마지막에서 n번째 요소)
+  - deleteCount
+    - 원본 배열의 요소를 제거하기 시작할 인덱스인 start부터 제거할 요소 개수
+    - deleteCount가 0인 경우 아무런 요소도 제거 X
+  - items
+    - 제거한 위치에 삽입할 요소들의 목록
+    - 생략한 경우 원본 배열에서 요소들을 제거
+  ```js
+  const arr = [1, 2, 3, 4];
+
+  // 인덱스 1부터 2개 삭제 후 그 자리에 20, 30 삽입
+  const result = arr.splice(1, 2, 20, 30);
+  
+  // 제거하는 요소 반환
+  console.log(result);    // [2, 3]
+  console.log(arr);    // [1, 20, 30, 4]
+  ```
+- splice 메서드에 3개의 인수를 모두 전다하면 첫 번째 인수부터 두 번째 인수 만큼 원본 배열에서 요소를 제거. 그리고 세 번째 인수 위치에 삽입할 요소들을 원본 배열에 삽입
+- splice 메서드이 두 번재 인수, 즉 제거할 요소의 개수를 0으로 지정하면 아무런 요소도 제거하지 않고 새로운 요소 삽입
+  ```js
+  const arr = [1, 2, 3, 4];
+
+  const result = arr.splice(1, 0, 100);
+
+  console.log(arr);    // [1, 100, 2, 3, 4]
+  console.log(reuslt);    // []
+  ```
+- splice 메서드의 세 번째 인수, 즉 제거한 위치에 추가할 요소들의 목록을 전달하지 않으면 원본 배열에서 지정된 요소를 제거
+  ```js
+  const arr = [1, 2, 3, 4];
+
+  const result = arr.splice(1, 2);
+
+  console.log(arr);    // [1, 4]
+  console.log(result);    // [2, 3]
+  ```
+- splice 메서드의 두 번째 인수를 생략하면 첫 번째 인수로 전달된 시작 인덱스부터 모든 요소 제거
+  ```js
+  const arr = [1, 2, 3, 4];
+
+  const result = arr.splice(1);
+
+  console.log(arr);    // [1]
+  console.log(result);    // [2, 3, 4]
+  ```
+- 배열의 특정 요소를 제거하려면 indexOf 메서드를 통해 특정 요소의 인덱스를 취득한 다음 splice 메서드 사용
+  ```js
+  const arr = [1, 2, 3, 1, 2];
+
+  function remove(array, item) {
+    // 인덱스 취득
+    const index = aray.indexOf(item);
+
+    // 제거할 item이 있다면 제거
+    if (index !== -1) array.splice(index, 1);
+
+    return array;
+  }
+
+  console.log(remove(arr, 2));    // [1, 3, 1, 2]
+  console.log(remove(arr, 10));    // [1, 3, 1, 2]
+  ```
+- filter 메서드를 사용하여 특정 요소 제거 가능하지만 중복된 경우도 모두 제거
+  ```js
+  const arr = [1, 2, 3, 1, 2];
+
+  function removeAll(array, item) {
+    return array.filter(v => v !== item);
+  }
+
+  console.log(removeAll(arr, 2));    // [1, 3, 1]
+  ```
+
+<br>
+
+### 8.9. Array.prototype.slice
+- 인수로 전달된 범위의 요소들을 복사하여 배열로 반환
+- 원본 배열 변경 X
+- slice 메서드는 두 개의 매개변수가 있음
+  - start
+    - 복사를 시작할 인덱스
+    - 음수인 경우 배열의 맨 마지막 인덱스
+  - end
+    - 복사를 종료할 인덱스
+    - 이 인덱스에 해당하는 요소는 복사되지 않음
+    - end는 생략 가능하며 생략 시 기본값은 length 프로퍼티 값
+  ```js
+  const arr = [1, 2, 3];
+
+  arr.slice(0, 1);    // [1]
+  arr.slice(1, 2);    // [2]
+
+  console.log(arr);    // [1, 2, 3]
+  ```
+- slice 메서드는 첫 번째 인수로 전달받은 인덱스부터 두 번째 인수로 전달받은 인덱스 이전(end 미포함)까지 요소들을 복사하여 배열로 반환
+- slice 메서드의 두 번째 인수를 생략하면 첫 번째 인수로 전달받은 인덱스부터 모든 요소를 복사하여 배열로 반환
+  ```js
+  const arr = [1, 2, 3];
+
+  arr.slice(1);    // [2, 3]
+  ```
+- slice 메서드의 첫 번째 인수가 음수인 경우 배열의 끝에서부터 요소를 복사하여 배열로 반환
+  ```js
+  const arr = [1, 2, 3];
+
+  arr.slice(-1);    // [3]
+  arr.slice(-2);    // [2, 3]
+  ```
+- slice 메서드의 인수를 모두 생략하면 원본 배열의 복사본을 생성하여 반환
+  ```js
+  const arr = [1, 2, 3];
+
+  const copy = arr.slice();
+  console.log(copy);    // [1, 2, 3]
+  console.log(arr === copy);    // false
+  ```
+- 이때 생성된 복사본은 얕은 복사를 통해 생성
+  - 얕은 복사 : 객체를 프로퍼티 값으로 갖는 객체의 경우 한 단계까지만 복사
+  - 깊은 복사 : 객체를 프로퍼티 값으로 갖는 객체의 경우 중첩되어 있는 객체까지 모두 복사
+- slice 메서드가 복사본을 생성하는 것을 이용하여 arguments, HTMLCollection, NodeList 같은 유사 배열 객체를 배열로 반환 가능 (ES5)
+  ```js
+  function sum() {
+    var arr = Array.prototype.slice.call(arguments);
+    console.log(arr);    // [1, 2, 3]
+
+    return arr.reduce(function (pre,cur) {
+      return pre + cur;
+    }, 0);
+  }
+
+  console.log(sum(1, 2, 3));    // 6
+  ```
+- Array.from 메서드를 사용하면 더욱 간단하게 유사 배열 객체를 배열로 반환 가능. Array.from 메서드는 유사 배열 객체 또는 이터러블 객체를 배열로 변환
+  ```js
+  function sum() {
+    const arr = Array.from(arguments);
+    console.log(arr);    // [1, 2, 3]
+
+    return arr.reduce((pre, cur) => pre + cur, 0);
+  }
+
+  console.log(sum(1, 2, 3));    // 6
+  ```
+- arguments 객체는 유사 배열 객체이면서 이터러블 객체. 이터러블 객체는 ES6의 스프레드 문법을 사용하여 간단하게 배열로 변환 가능
+  ```js
+  function sum() {
+    const arr = [...arguments];
+    console.log(arr);    // [1, 2, 3]
+
+    return arr.reduce((pre, cur) => pre + cur, 0);
+  }
+
+  console.log(sum(1, 2, 3));    // 6
+  ```
+
+<br>
+
+### 8.10. Array.prototype.join
+- 원본 배열의 모든 요소를 문자열로 변환 후, 인수로 전달받은 문자열, 즉 구분자로 연결한 문자열을 반환
+- 구분자는 생략 가능하며 기본 구분자는 콤마(,)
+  ```js
+  const arr = [1, 2, 3, 4];
+
+  arr.join();    // '1, 2, 3, 4';
+  arr.join('');    // '1234'
+  arr.join(':');    //'1:2:3:4'
+  ```
+
+<br>
+
+### 8.11. Array.prototype.reverse
+- 원본 배열의 순서를 반대로 뒤짚음
+- 원본 배열 변경
+- 반환값은 변경된 배열
+  ```js
+  const arr = [1, 2, 3];
+  const result = arr.reverse();
+
+  console.log(arr);    // [3, 2, 1]
+  console.log(result);    // [3, 2, 1]
+  ```
+
+<br>
+
+### 8.12. Array.prototype.fill
+- ES6에 도입된 fill 메서드는 인수로 전달받은 값을 배열의 처음부터 끝까지 요소로 채움
+- 원본 배열 변경
+  ```js
+  const arr = [1, 2, 3];
+
+  arr.fill(0);
+
+  console.log(arr);    // [0, 0, 0]
+  ```
+- 두 번째 인수로 요소 채우기 시작할 인덱스 전달   
+  ```js
+  const arr = [1, 2, 3];
+
+  arr.fill(0, 1); 
+
+  console.log(arr);    // [1, 0, 0]
+  ```
+- 세 번째 인수로 요소 채우기를 멈출 인덱스 전달 
+  ```js
+  const arr = [1, 2, 3, 4, 5];
+
+  arr.fill(0, 1, 3);
+
+  console.log(arr);    // [1, 0, 0, 4, 5]
+  ```
+- fill 메서드를 사용하면 배열을 생성하면서 특정 값으로 요소 채우기 가능
+  ```js
+  const arr = new Array(3);
+  console.log(arr);    // [empty * 3]
+
+  const result = arr.fill(1);    
+  
+  console.log(arr);    // [1, 1, 1]
+  console.log(result);    // [1, 1, 1]
+  ```
+- fill 메서드로 요소를 채울 경우 모든 요소를 하나의 값으로만 채우기 가능하지만 Array.from 메서드를 사용하면 두 번째 인수로 전달한 콜백 함수를 통해 요소값을 만들면서 배열 채우기 가능
+  - Array.from 메서드는 두 번째 인수로 전달한 콜백 함수에 첫 번째 인수에 의해 생성된 배열의 요소값과 인덱스를 순차적으로 전달하면서 호출하고, 콜백 함수의 반환값으로 구성된 배열 반환
+  ```js
+  const sequences = (length = 0) => Array.from({ length }, (_, i) => i);
+
+  console.log(sequences(3));    // [0, 1, 2]
+  ```
+
+<br>
+
+### 8.13. Array.prototype.includes
+- ES7에서 도입된 includes 메서드는 배열 내에 특정 요소가 포함되어 있는지 확인하여 true 또는 false 반환
+- 첫 번째 인수로 검색할 대상 지정
+  ```js
+  const arr = [1, 2, 3];
+
+  arr.includes(2);    // true
+  arr.includes(100);    // false
+  ```
+- 두 번째 인수로 검색을 시작할 인덱스 전달 가능
+  - 두 번째 인수를 생략할 경우 기본값 0 설정
+  - 두 번째 인수에 음수를 전달하면 length 프로퍼티 값과 음수 인덱스를 합산하여 검색 시작 인덱스 설정
+  ```js
+  const arr = [1, 2, 3];
+
+  arr.includes(1, 1);    // false
+  arr.includes(3, -1);    // true
+  ```
+- 배열에서 인수로 전달된 요소를 검색하여 인덱스를 반환하는 indexOf 메서드를 사용하면 배열 내에 특정한 요소가 포함되어 있는지 확인 가능
+  - 하지만 indexOf 메서드를 사용하면 반환값이 -1인지 확인해 보아야 하고 배열에 NaN이 포함되어 있는지 확인할 수 없음
+  ```js
+  [NaN].indexOf(NaN) !== -1;    // false
+  [NaN].includes(NaN);    // true
+  ```
+
+<br>
+
+### 8.14. Array.prototype.flat
+- ES10에서 도입된 flat 메서드는 인수로 전달한 깊이만큼 재귀적으로 배열을 평탄화
+  ```js
+  [1, [2, 3, 4, 5]].flat();    // [1, 2, 3, 4, 5]
+  ```
+- 중첩 배열을 평탄화할 깊이를 인수로 전달 가능
+  - 인수를 생략할 경우 기본값은 1
+  - 인수로 Infinity를 전달하면 중첩 배열을 모두 평탄화
+  ```js
+  [1, [2, [3, [4]]]].flat();    // [1, 2, [3, [4]]]
+  [1, [2, [3, [4]]]].flat(1);    // [1, 2, [3, [4]]]
+
+  [1, [2, [3, [4]]]].flat(2);    // [1, 2, 3, [4]]
+
+  [1, [2, [3, [4]]]].flat().flat();    // [1, 2, 3, [4]]
+
+  [1, [2, [3, [4]]]].flat(Infinity);    // [1, 2, 3, 4]
+  ```
