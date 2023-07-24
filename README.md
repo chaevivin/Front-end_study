@@ -39,6 +39,7 @@
 - [ES6 함수의 추가 기능 (additional features of ES6 function)](https://github.com/chaevivin/JavaScript_study/blob/main/contents/additional_features_of_ES6_function.md)
 - [배열 (array)](https://github.com/chaevivin/JavaScript_study/blob/main/contents/array.md)
 - [Number](https://github.com/chaevivin/JavaScript_study/blob/main/contents/Number.md)
+- [Math](https://github.com/chaevivin/JavaScript_study/blob/main/contents/Math.md)
 
 <br>
 <br>
