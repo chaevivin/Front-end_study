@@ -40,6 +40,7 @@
 - [배열 (array)](https://github.com/chaevivin/JavaScript_study/blob/main/contents/array.md)
 - [Number](https://github.com/chaevivin/JavaScript_study/blob/main/contents/Number.md)
 - [Math](https://github.com/chaevivin/JavaScript_study/blob/main/contents/Math.md)
+- [Date](https://github.com/chaevivin/JavaScript_study/blob/main/contents/Date.md)
 
 <br>
 <br>
