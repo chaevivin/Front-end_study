@@ -42,6 +42,7 @@
 - [Math](https://github.com/chaevivin/JavaScript_study/blob/main/contents/Math.md)
 - [Date](https://github.com/chaevivin/JavaScript_study/blob/main/contents/Date.md)
 - [RegExp](https://github.com/chaevivin/JavaScript_study/blob/main/contents/RegExp.md)
+- [String](https://github.com/chaevivin/JavaScript_study/blob/main/contents/String.md)
 
 <br>
 <br>
