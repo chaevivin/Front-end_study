@@ -43,6 +43,7 @@
 - [Date](https://github.com/chaevivin/JavaScript_study/blob/main/contents/Date.md)
 - [RegExp](https://github.com/chaevivin/JavaScript_study/blob/main/contents/RegExp.md)
 - [String](https://github.com/chaevivin/JavaScript_study/blob/main/contents/String.md)
+- [Symbol](https://github.com/chaevivin/JavaScript_study/blob/main/contents/Symbol.md)
 
 <br>
 <br>
