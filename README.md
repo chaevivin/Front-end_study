@@ -44,6 +44,7 @@
 - [RegExp](https://github.com/chaevivin/JavaScript_study/blob/main/contents/RegExp.md)
 - [String](https://github.com/chaevivin/JavaScript_study/blob/main/contents/String.md)
 - [Symbol](https://github.com/chaevivin/JavaScript_study/blob/main/contents/Symbol.md)
+- [이터러블 (iterable)](https://github.com/chaevivin/JavaScript_study/blob/main/contents/iterable.md)
 
 <br>
 <br>
