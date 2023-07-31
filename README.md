@@ -46,6 +46,7 @@
 - [Symbol](https://github.com/chaevivin/JavaScript_study/blob/main/contents/Symbol.md)
 - [이터러블 (iterable)](https://github.com/chaevivin/JavaScript_study/blob/main/contents/iterable.md)
 - [스프레드 문법 (spread syntax)](https://github.com/chaevivin/JavaScript_study/blob/main/contents/spread_syntax.md)
+- [디스트럭처링 할당 (destructuring assignment)](https://github.com/chaevivin/JavaScript_study/blob/main/contents/destructuring_assignment.md)
 
 <br>
 <br>
