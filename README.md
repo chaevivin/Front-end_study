@@ -48,6 +48,7 @@
 - [스프레드 문법 (spread syntax)](https://github.com/chaevivin/JavaScript_study/blob/main/contents/spread_syntax.md)
 - [디스트럭처링 할당 (destructuring assignment)](https://github.com/chaevivin/JavaScript_study/blob/main/contents/destructuring_assignment.md)
 - [Set과 Map (Set and Map)](https://github.com/chaevivin/JavaScript_study/blob/main/contents/Set_and_Map.md)
+- [브라우저의 렌더링 과정 (browser rendering process)](https://github.com/chaevivin/JavaScript_study/blob/main/contents/browser_rendering_process.md)
 
 <br>
 <br>
