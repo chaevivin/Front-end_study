@@ -890,3 +890,167 @@
 <br>
 <br>
 
+## 4. 노드 정보 취득
+- 노드 객체에 대한 정보를 취득하려면 다음과 같은 노드 정보 프로퍼티를 사용
+  | 프로퍼티 | 설명 |
+  | :--- | :--- |
+  | Node.prototype.nodeType | 노드 객체의 종류(노드 타입)를 나타내는 상수를 반환. 노드 타입 상수는 Node에 정의 <br> - Node.ELEMENT_NODE : 요소 노드 타입을 나타내는 상수 1 반환 <br> - Node.TEXT_NODE : 텍스트 노드 타입을 나타내는 상수 3을 반환 <br> - Node.DOCUMENT_NODE : 문서 노드 타입을 나타내는 상수 9를 반환 |
+  | Node.prototype.nodeName | 노드의 이름을 문자열로 반환 <br> - 요소 노드 : 대문자 문자열로 태그 이름 반환 <br> - 텍스트 노드 : 문자열 '#text' 반환 <br> - 문서 노드 : 문자열 '#document' 반환 |
+  ```html
+  <!DOCTYPE html>
+  <html>
+  <body>
+    <div id="foo">Hello</div>
+  </body>
+  <script>
+    console.log(document.nodeType);    // 9
+    console.log(document.nodeName);    // #document
+
+    // 요소 노드의 노드 정보 취득
+    const $foo = document.getElementById('foo');
+    console.log($foo.nodeType);    // 1
+    console.log($foo.nodeName);    // DIV
+
+    // 텍스트 노드의 노드 정보 취득
+    const $textNode = $foo.firstChild;
+    console.log($textNode.nodeType);    // 3
+    console.log($textNode.nodeName);    // #text
+  </script>
+  </html>
+  ```
+
+## 5. 요소 노드의 텍스트 조작
+
+<br>
+
+### 5.1. nodeValue
+- Node.prototype.nodeValue 프로퍼티는 setter와 getter 모두 존재하는 접근자 프로퍼티
+  - 참조와 할당 모두 가능
+- 노드 객체의 nodeValue 프로퍼티를 참조하면 노드 객체의 값 반환
+  - 노드 객체의 값 : 텍스트 노드의 텍스트
+  - 텍스트가 아닌 노드(문서 노드나 요소 노드)의 nodeValue 프로퍼티를 참조하면 null 반환
+  ```html
+  <!DOCTYPE html>
+  <html>
+    <body>
+      <div id="foo">Hello</div>
+    </body>
+    <script>
+      // 문서 노드의 nodeValue 프로퍼티를 참조
+      console.log(document.nodeValue);    // null
+
+      // 요소 노드의 nodeValue 프로퍼티를 참조
+      const $foo = document.getElementById('foo');
+      console.log($foo.nodeValue);    // null
+
+      // 텍스트 노드의 nodeValue 프로퍼티 참조
+      const $textNode = $foo.firstChild;
+      console.log($textNode.nodeValue);    // Hello
+    </script>
+  </html>
+  ```
+- 텍스트 노드의 nodeValue 프로퍼티를 참조할 때만 텍스트 노드의 값을 반환
+- 텍스트 노드의 nodeValue 프로퍼티에 값을 할당하면 텍스트 노드의 값, 즉 텍스트 변경 가능
+  - 요소 노드의 텍스트를 변경하려면 처리 필요
+    1. 텍스트를 변경할 요소 노드를 취득한 다음, 취득한 요소 노드의 텍스트 노드를 탐색. 텍스트 노드는 요소 노드의 자식 노드이므로 firstChild 프로퍼티를 사용하여 탐색
+    2. 탐색한 텍스트 노드의 nodeValue 프로퍼티를 사용하여 텍스트 노드의 값 변경
+  ```html
+  <!DOCTYPE html>
+  <html>
+    <body>
+      <div id="foo">Hello</div>
+    </body>
+    <script>
+      // 1. #foo 요소 노드의 자식 노드읜 텍스트 노드 취득
+      const $textNode = document.getElementById('foo').firstChild;
+
+      // 2. nodeValue 프로퍼티를 사용하여 텍스트 노드의 값 변경
+      $textNode.nodeValue = 'World';
+
+      console.log($textNode.nodeValue);    // World
+    </script>
+  </html>
+  ```
+
+<br>
+
+### 5.2. textContent
+- Noede.prototype.textContent 프로퍼티는 setter와 getter 모두 존재하는 접근자 프로퍼티로서 요소 노드의 텍스트와 모든 자손 노드의 텍스트를 모두 취득하거나 변경
+- 요소 노드의 textContent 프로퍼티를 참조하면 요소 노드의 콘텐츠 영역 내의 텍스트 모두 반환
+  - 요소 노드의 childNodes 프로퍼티가 반환한 모든 노드들의 텍스트 노드의 값(텍스트)을 모두 반환, HTML 마크업은 무시
+  ```html
+  <!DOCTYPE html>
+  <html>
+    <body>
+      <div id="foo">Hello <span>world!</span></div>
+    </body>
+    <script>
+      console.log(document.getElementById('foo').textContent);    // Hello world!
+    </script>
+  </html>
+  ```
+- nodeValue 프로퍼티를 사용하면 textContent 프로퍼티를 사용할 때보다 코드가 복잡
+  ```html
+  <!DOCTYPE html>
+  <html>
+    <body>
+      <div id="foo">Hello <span>world!</span></div>
+    </body>
+    <script>
+      // #foo 요소 노드는 텍스트 노드가 아니다.
+      console.log(document.getElementById('foo').nodeValue);    // null
+
+      // #foo 요소 노드의 자식 노드인 텍스트 노드의 값을 취득
+      console.log(document.getElementById('foo').firstChild.nodeValue);    // Hello
+      
+      // span 요소 노드의 자식 노드인 텍스트 노드의 값을 취득
+      console.log(document.getElementById('foo').lastChild.firstChild.nodeValue);    // world!
+    </script>
+  </html>
+  ```
+- 요소 노드의 콘텐츠 영역에 자식 요소 노드가 없고 텍스트만 존재한다면 firstChild.nodeValue와 textContent 프로퍼티는 같은 결과 반환 -> textContent 사용 권장
+  ```html
+  <!DOCTYPE html>
+  <html>
+    <body>
+      <!-- 요소 노드의 콘텐츠 영역에 다른 요소 노드가 없고 텍스트만 존재 -->
+      <div id="foo">Hello</div>
+    </body>
+    <script>
+      const $foo = document.getElementById('foo');
+
+      console.log($foo.textConent === $foo.firstChild.nodeValue);    // true
+    </script>
+  </html>
+  ```
+- 요소 노드의 textContent 프로퍼티에 문자열을 할당하면 요소 노드의 모든 자식 노드가 제거되거 할당한 문자열이 텍스트로 추가
+  - 할당한 문자열에 HTML 마크업이 포함되어 있더라도 문자열 그대로 인식되어 텍스트로 취급 -> HTML 마크업 파싱 X
+  ```html
+  <!DOCTYPE html>
+  <html>
+    <body>
+      <div id="foo">Hello <span>world!</span></div>
+    </body>
+    <script>
+      document.getElementById('foo').textContent = 'Hi <span>there!</span>';
+    </script>
+  </html>
+  ```
+- innerText 프로퍼티 : textContent 프로퍼티와 유사하게 동작
+  - innerText 프로퍼티 사용을 권장하지 않는 이유
+    - innerText 프로퍼티는 CSS에 순종적. 예를 들어, innerText 프로퍼티는 CSS에 의해 비표시로 지정된 요소 노드의 텍스트 반환 X
+    - innerText 프로퍼티는 CSS를 고려해야 하므로 textContent 프로퍼티보다 느림  
+
+<br>
+<br>
+
+## 6. DOM 조작
+- DOM 조작 : 새로운 노드를 생성하여 DOM에 추가하거나 기존 노드를 삭제 또는 교체하는 것
+- DOM 조작에 의해 DOM에 새로운 노드가 추가되거나 삭제되면 리플로우와 리페인트가 발생하는 원인이 되므로 성능에 영향
+  - 복잡한 콘텐츠를 다루는 DOM 조작은 성능 최적화를 위해 주의
+
+<br>
+
+### 6.1. innerHTML
+- Element.prototype.innerHTML
+- 이 프로퍼티는 setter와 getter 모두 존재하는 접근자 프로퍼티로서 요소 노드의 HTML 마크업을 취득하거나 변경
