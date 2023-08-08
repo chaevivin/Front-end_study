@@ -1054,3 +1054,526 @@
 ### 6.1. innerHTML
 - Element.prototype.innerHTML
 - 이 프로퍼티는 setter와 getter 모두 존재하는 접근자 프로퍼티로서 요소 노드의 HTML 마크업을 취득하거나 변경
+- 요소 노드의 innerHTML 프로퍼티를 참조하면 요소 노드의 콘텐츠 영역 내에 포함된 모든 HTML 마크업을 문자열로 반환
+  ```HTML
+  <!DOCTYPE html>
+  <html>
+    <body>
+      <div id="foo">Hello </span>world!</span></div>
+    </body>
+    <script>
+      // #foo 요소의 콘텐츠 영역 내의 HTML 마크업을 문자열로 취득
+      console.log(document.getElementById('foo').innerHTML);    // "Hello <span>world!</span>"
+    </script>
+  </html>
+  ```
+- 요소 노드의 innerHTML 프로퍼티에 문자열을 할당하면 요소 노드의 모든 자식 노드가 제거되고 할당한 문자열에 포함되어 있는 HTML 마크업이 파싱되어 요소 노드의 자식 노드로 DOM에 반영
+  ```html
+  <!DOCTYPE html>
+  <html>
+    <body>
+      <div id="foo">Hello </span>world!</span></div>
+    </body>
+    <script>
+      document.getElementById('foo').innerHTML = 'Hi <span>there!</span>';
+    </script>
+  </html>
+  ```
+- innerHTML 프로퍼티를 사용하면 HTML 마크업 문자열로 간단히 DOM 조작이 가능
+  ```html
+  <!DOCTYPE html>
+  <html>
+    <body>
+      <ul id="fruits">
+        <li class="apple">Apple</li>
+      </ul>
+    </body>
+    <script>
+      const $fruits = document.getElementById('fruits');
+
+      // 노드 추가
+      $fruits.innerHTML += '<li class='banana'>Banana</li>';
+
+      // 노드 교체
+      $fruits.innerHTML = '<li class='orange'>Orange</li>';
+
+      // 노드 삭제
+      $fruits.innerHTML = '';
+    </script>
+  </html>
+  ```
+- 요소 노드의 innerHTML 프로퍼티에 할당한 HTML 마크업 문자열은 렌더링 엔진에 의해 파싱되어 요소 노드의 자식으로 DOM에 반영됨
+  - 이때 사용자로부터 입력받은 데이터를 그대로 innerHTML 프로퍼티에 할당하는 것은 **크로스 사이트 스크립팅 공격(XSS: Cross-Site Scripting Attacks)** 에 취약하므로 위험
+  - HTML 마크업 내에 자바스크립트 악성 코드가 포함되어 있다면 파싱 과정에서 그대로 실행될 가능성 존재
+  - HTML5는 innerHTML 프로퍼티로 삽입된 script 요소 내의 자바스크립트 코드 실행 X
+  - 하지만 에러 이벤트를 강제로 발생시켜 자바스크립트 코드가 실행되도록 할 수 있음
+  ```html
+  <!DOCTYPE html>
+  <html>
+    <body>
+      <div id="foo">Hello</div>
+    </body>
+    <script>
+      document.getElementById('foo').innerHTML = `<img src="x" onerror="alert(document.cookie">`;
+    </script>
+  </html>
+  ```
+
+<br>
+
+- 장점 
+  - innerHTML 프로퍼티를 사용한 DOM 조작은 구현이 간단하고 직관적
+- 단점
+  - 크로스 사이트 스크립팅 공격에 취약
+  - 요소 노드의 innerHTML 프로퍼티에 HTML 마크업 문자열을 할당하는 경우 요소 노드의 모든 자식을 제거하고 할당한 HTML 마크업 문자열을 파싱하여 DOM 변경 -> 비효율적
+    - 아래 예제에서는 #fruits 요소의 모든 자식 노드(li.apple)를 제거하고 새롭게 요소 노드 li.apple과 li.banana를 생성하여 #fruits 요소의 자식 요소로 추가
+  ```html
+  <!DOCTYPE html>
+  <html>
+    <body>
+      <ul id="fruits">
+        <li class="apple">Apple</li>
+      </ul>
+    </body>
+    <script>
+      const $fruits = document.getElementById('fruits');
+
+      // 노드 추가
+      $fruits.innerHTML += '<li class='banana'>Banana</li>';
+    </script>
+  </html>
+  ```
+  - 새로운 요소를 삽입할 때 삽입될 위치 지정 불가
+- innerHTML 프로퍼티는 복잡하지 않은 요소를 새롭게 추가할 때 유용하지만 기존 요소를 제거하지 않으면서 위치를 지정해 새로운 요소를 삽입할 때는 사용 권장 X
+
+<br>
+
+### 6.2. insertAdjacentHTML 메서드
+- Element.prototype.insertAdjacentHTML(position, DOMString)
+- 기존 요소를 제거하지 않으면서 위치를 지정해 새로운 요소를 삽입
+- insertAdjacentHTML 메서드는 두 번째 인수로 전달할 HTML 마크업 문자열(DOMString)을 파싱하고 그 결과로 생성된 노드를 첫 번째 인수로 전달할 위치(position)에 삽입하여 DOM에 반영
+  - 첫 번째 인수 : beforebegin, afterbegin, beforeend, afterend
+  ```html
+  <!DOCTYPE html>
+  <html>
+    <body>
+      <!-- beforebegin -->
+      <div id="foo">
+        <!-- afterbegin -->
+        text
+        <!-- beforeend -->
+      </div>
+      <!-- afterend -->
+    </body>
+    <script>
+      const $foo = document.getElementById('foo');
+
+      $foo.insertAdjacentHTML('beforebegin', '<p>beforebegin</p>');
+      $foo.insertAdjacentHTML('afterbegin', '<p>afterbegin</p>');
+      $foo.insertAdjacentHTML('beforeend', '<p>beforeend</p>');
+      $foo.insertAdjacentHTML('afterend', '<p>afterend</p>');
+    </script>
+  </html>
+  ```
+- insertAdjacentHTML 메서드는 기존 요소에는 영향을 주지 않고 새롭게 삽입될 요소만 파싱하여 자식 요소로 추가하므로 기존의 자식 노드를 모두 제거하고 다시 처음부터 새롭게 자식 노드를 생성하여 자식 요소로 추가하는 innerHTML 프로퍼티보다 효율적이고 빠름
+- 단, insertAdjacentHTML 메서드는 innerHTML과 마찬가지로 HTML 마크업 문자열을 파싱하므로 크로스 사이트 스크립팅 공격에 취약
+
+<br>
+
+### 6.3. 노드 생성과 추가
+- DOM은 노드를 직접 생성/삽입/삭제/치환하는 메서드 제공
+  ```HTML
+  <!DOCTYPE html>
+  <html>
+    <body>
+      <ul id="fruits">
+        <li class="apple">Apple</li>
+      </ul>
+    </body>
+    <script>
+      const $fruits = document.getElementById('fruits');
+
+      // 1. 요소 노드 생성
+      const $li = document.createElement('li');
+
+      // 2. 텍스트 노드 생성
+      const textNode = document.createTextNode('Banana');
+
+      // 3. 텍스트 노드를 $li 요소 노드의 자식 노드로 추가
+      $li.appendChild(textNode);
+
+      // 4. $li 요소 노드를 #fruits 요소 노드의 마지막 자식 노드로 추가
+      $fruits.appendChild($li);
+    </script>
+  </html>
+  ```
+  - 새로운 요소 노드를 생성하고 텍스트 노드를 생성하여 요소 노드의 자식 노드로 추가한 다음, 요소 노드를 DOM에 추가
+
+<br>
+
+**(1) 요소 노드 생성**
+- Document.prototype.createElement(tagName)
+- 이 메서드는 요소 노드를 생성하여 반환
+- createElement 메서드의 매개변수 tagName에는 태그 이름을 나타내는 문자열을 인수로 전달
+- createElement 메서드로 생성한 요소 노드는 기존 DOM에 추가되지 않고 홀로 존재하는 상태
+  - createElement 메서드는 요소 노드를 생성할 뿐 DOM에 추가 X
+  - 생성된 요소 노드를 DOM에 추가하는 처리 필요
+- createElement 메서드로 생성한 요소 노드는 자식 노드 X
+  - 요소 노드의 자식 노드인 텍스트 노드도 X
+  ```js
+  const $li = document.createElement('li');
+  console.log($li.childNode);    // NodeList []
+  ```
+
+<br>
+
+**(2) 텍스트 노드 생성**
+- Document.prototype.createTextNode(text)
+- 이 메서드는 텍스트 노드를 생성하여 반환
+- createTextNode 메서드의 매개변수 text에는 텍스트 노드의 값으로 사용할 문자열을 인수로 전달
+- createTextNode 메서드로 생성한 텍스트 노드는 요소 노드의 자식 노드로 추가되지 않고 홀로 존재
+  - createElement 메서드와 같이 텍스트 노드를 생성할 뿐 요소 노드에 추가 X
+  - 생성된 텍스트 노드를 요소 노드에 추가하는 처리 필요
+
+<br>
+
+**(3) 텍스트 노드를 요소 노드의 자식 노드로 추가**
+- Node.prototype.appendChild(childNode) 
+- 이 메서드는 매개변수 childNode에게 인수로 전달한 노드를 appendChild 메서드를 호출한 노드의 마지막 자식 노드로 추가
+  - appendChild 메서드의 인수로 createTextNode 메서드로 생성한 텍스트 노드를 전달하면 appendChild 메서드를 호출한 노드의 마지막 자식 노드로 텍스트 노드 추가
+- appendChild 메서드를 통해 요소 노드와 텍스트 노드는 부자 관계로 연결되었지만 아직 기존 DOM에 추가 X
+- 요소 노드에 자식 노드가 하나도 없는 경우, textContent 프로퍼티 사용하면 더 간편
+  ```js
+  // 텍스트 노드를 생성하여 요소 노드의 자식 노드로 추가
+  $li.appendChild(document.createTextNode('Banana'));
+
+  // textContent 프로퍼티 사용
+  $li.textContent = 'Banana';
+  ```
+  - 요소 노드에 자식 노드가 있는 경우 요소 노드의 textContent 프로퍼티에 문자열을 할당하면 요소 노드의 모든 자식 노드가 제거되고 할당한 문자열이 텍스트로 추가되기 때문에 주의 필요
+
+<br>
+
+**(4) 요소 노드를 DOM에 추가** 
+- Node.prototype.appendChild
+- 이 메서드를 사용하면 텍스트 노드와 부자 관계로 연결한 노드를 $fruits 요소 노드의 마지막 자식 요소로 추가
+- 이 과정에서 새롭게 생성한 요소 노드가 DOM에 추가
+- 이때 리플로우와 리페인트 실행
+
+<br>
+
+### 6.4. 복수의 노드 생성과 추가
+```html
+<!DOCTYPE html>
+  <html>
+    <body>
+      <ul id="fruits"></ul>
+    </body>
+    <script>
+      const $fruits = document.getElementById('fruits');
+
+      ['Apple', 'Banana', 'Orange'].forEach(text => {
+        // 1. 요소 노드 생성
+        const $li = document.createElement('li');
+
+        // 2. 텍스트 노드 생성
+        const textNode = document.createTextNode('Banana');
+
+        // 3. 텍스트 노드를 $li 요소 노드의 자식 노드로 추가
+      $li.appendChild(textNode);
+
+      // 4. $li 요소 노드를 #fruits 요소 노드의 마지막 자식 노드로 추가
+      $fruits.appendChild($li);
+      });
+    </script>
+  </html>
+```
+위 예제를 살펴보면,
+- 3개의 요소 노드를 생성하여 DOM에 3번 추가하므로 DOM이 3번 변경
+- 리플로우와 리페인트가 3번 실행
+- DOM을 변경하는 것은 높은 비용이 드는 처리이므로 가급적 횟수를 줄이는 것이 성능에 유리
+- 위 예제처럼 기존 DOM에 요소 노드를 반복하여 추가하는 것은 비효율적
+
+<br>
+
+```html
+<!DOCTYPE html>
+  <html>
+    <body>
+      <ul id="fruits"></ul>
+    </body>
+    <script>
+      const $fruits = document.getElementById('fruits');
+
+      // 컨테이너 요소 생성
+      const $container = document.createElement('div');
+
+      ['Apple', 'Banana', 'Orange'].forEach(text => {
+        // 1. 요소 노드 생성
+        const $li = document.createElement('li');
+
+        // 2. 텍스트 노드 생성
+        const textNode = document.createTextNode('Banana');
+
+        // 3. 텍스트 노드를 $li 요소 노드의 자식 노드로 추가
+      $li.appendChild(textNode);
+
+      // 4. $li 요소 노드를 컨테이너 요소의 마지막 자식 노드로 추가
+      $container.appendChild($li);
+      });
+
+      // 5. 컨테이너 요소 노드를 #fruits 요소 노드의 마지막 자식 노드로 추가
+      $fruits.appendChild($container);
+    </script>
+  </html>
+```
+위 예제를 살펴보면,
+- 컨테이너 요소를 미리 생성 -> DOM에 추가해야 할 3개의 요소 노드를 컨테이너 요소에 자식 노드로 추가 -> 컨테이너 요소를 #fruits 요소에 자식으로 추가
+- DOM 한 번만 변경
+- 성능에 유리하지만 불필요한 컨테이너 요소(div)가 DOM에 추가되는 단점 -> DocumentFragment 노드로 해결
+
+<br>
+
+- DocumentFragment 노드
+  - 문서, 요소, 어트리뷰트, 텍스트 노드와 같은 객체의 일종
+  - 부모 노드가 없어서 기존 DOM과 별도로 존재
+    - DocumentFragment 노드에 자식 노드를 추가하여도 기존 DOM에 변경 발생 X
+  - 자식 노드들의 부모 노드로서 별도의 서브 DOM을 구성하여 기존 DOM에 추가하기 위한 용도로 사용
+  - DocumentFragment 노드를 DOM에 추가하면 자신은 제거되고 자신의 자식 노드만 DOM에 추가
+- Document.prototype.createDocumentFragment
+  - 이 메서드는 비어 있는 DocumentFragment 노드를 생성하여 반환
+  ```html
+  <!DOCTYPE html>
+  <html>
+    <body>
+      <ul id="fruits"></ul>
+    </body>
+    <script>
+      const $fruits = document.getElementById('fruits');
+
+      // DocumentFragment 노드 생성
+      const $fragment = document.createDocumentFragment();
+
+      ['Apple', 'Banana', 'Orange'].forEach(text => {
+        // 1. 요소 노드 생성
+        const $li = document.createElement('li');
+
+        // 2. 텍스트 노드 생성
+        const textNode = document.createTextNode('Banana');
+
+        // 3. 텍스트 노드를 $li 요소 노드의 자식 노드로 추가
+        $li.appendChild(textNode);
+
+        // 4. $li 요소 노드를 DocumentFragment 노드의 마지막 자식 노드로 추가
+        $fragment.appendChild($li);
+      });
+
+      // 5. DocumentFragment를 #fruits 요소 노드의 마지막 자식 노드로 추가
+      $fruits.appendChild($fragment);
+    </script>
+  </html>
+  ```
+  - DocumentFragment 노드 생성 -> DOM에 추가할 요소 노드 생성 -> DocumentFragment 노드에 자식 노드로 추가 -> DocumentFragment 노드를 기존 DOM에 추가
+  - DOM 한 번 변경, 리플로우와 리페인트 한 번 실행
+- 여러 요소 노드를 DOM에 추가하는 경우 DocumentFragment 노드를 사용하는 것이 효율적
+
+<br>
+
+### 6.5. 노드 삽입
+**(1) 마지막 노드로 추가**
+- Node.prototype.appendChild
+- 이 메서드는 인수로 전달받은 노드를 자신을 호출한 노드의 마지막 자식 노드로 DOM에 추가
+- 노드를 추가할 위치를 지정할 수 없고 언제나 마지막 자식 노드로 추가
+  ```HTML
+  <!DOCTYPE html>
+  <html>
+    <body>
+      <ul id="fruits">
+        <li>Apple</li>
+        <li>Banana</li>
+      </ul>
+    </body>
+    <script>
+      // 요소 노드 생성
+      const $li = document.createElement('li');
+
+      // 텍스트 노드를 $li 요소 노드의 마지막 자식 노드로 추가
+      $li.appendChild(document.createTextNode('Orange'));
+
+      // $li 요소 노드를 #fruits 요소 노드의 마지막 자식 노드로 추가
+      document.getElementById('fruits').appendChild($li);
+    </script>
+  </html>
+  ```
+
+<br>
+
+**(2) 지정한 위치에 노드 삽입**
+- Node.prototype.insertBefore(newNode, childNode)
+- 이 메서드는 첫 번째 인수로 전달받은 노드를 두 번째 인수로 전달받은 노드 앞에 삽입
+  ```html
+  <!DOCTYPE html>
+  <html>
+    <body>
+      <ul id="fruits">
+        <li>Apple</li>
+        <li>Banana</li>
+      </ul>
+    </body>
+    <script>
+      const $fruits = document.getElementById('fruits');
+
+      // 요소 노드 생성
+      const $li = document.createElement('li');
+
+      // 텍스트 노드를 $li 요소 노드의 마지막 자식 노드로 추가
+      $li.appendChild(document.createTextNode('Orange'));
+
+      // $li 요소 노드를 #fruits 요소 노드의 마지막 자식 요소 앞에 삽입
+      $fruits.insertBefore($li, $fruits.lastElementChild);
+      // Apple - Orange - Banana
+    </script>
+  </html>
+  ```
+- 두 번째 인수로 전달받은 노드는 반드시 insertBefore 메서드를 호출한 노드의 자식 노드 -> 그렇지 않으면 DOMException 에러 발생
+- 두 번째 인수로 전달받은 노드가 null이면 첫 번째 인수로 전달받은 노드를 insertBefore 메서드를 호출한 노드의 마지막 자식 노드로 추가
+  - appendChild 메서드처럼 동작
+
+<br>
+
+### 6.6. 노드 이동
+- DOM에 이미 존재하는 노드를 appendChild 또는 insertBefore 메서드를 사용하여 DOM에 다시 추가하면 현재 위치에서 노드를 제거하고 새로운 위치에 노드 추가 = 노드 이동
+  ```HTML
+  <!DOCTYPE html>
+  <html>
+    <body>
+      <ul id="fruits">
+        <li>Apple</li>
+        <li>Banana</li>
+        <li>Orange</li>
+      </ul>
+    </body>
+    <script>
+      // 요소 노드 생성
+      const $fruits = document.getElementById('fruits');
+
+      // 이미 존재하는 요소 노드 취득
+      const [$apple, $banana, ] = $fruits.children;
+
+      // 이미 존재하는 $apple 요소 노드를 #fruits 요소 노드의 마지막 노드로 이동
+      $fruits.appendChild($apple);    // Banana - Orange - Apple
+
+      // 이미 존재하는 $banana 요소 노드를 #fruits 요소 노드의 마지막 자식 노드 앞으로 이동
+      $fruits.insertBefore($banana, lastElementChild);    // Orange - Banana - Apple
+    </script>
+  </html>
+  ```
+
+<br>
+
+### 6.7. 노드 복사
+- Node.prototype.cloneNode([deep: true | false])
+- 이 메서드는 노드의 사본을 생성하여 반환
+- 매개변수 deep의 인수
+  - true : 노드를 깊은 복사하여 모든 자손 노드가 포함된 사본 생성
+  - false나 생락 : 노드를 얕은 복사하여 노드 자신만의 사본 생성
+    - 얕은 복사로 생성된 요소 노드는 자손 노드를 복사하지 않으므로 텍스트 노드 X
+  ```html
+  <!DOCTYPE html>
+  <html>
+    <body>
+      <ul id="fruits">
+        <li>Apple</li>
+      </ul>
+    </body>
+    <script>
+      // 요소 노드 생성
+      const $fruits = document.getElementById('fruits');
+      const $apple = $fruits.firstElementChild;
+
+      // $apple 요소를 얕은 복사하여 사본 생성
+      const $shallowClone = $apple.cloneNode();
+      // 사본 요소 노드에 텍스트 추가
+      $shallowClone.textContent = 'Banana';
+      // 사본 요소 노드를 #fruits 요소 노드의 마지막 노드로 추가
+      $fruits.appendChild($shallowClone);
+
+      // #fruits 요소를 깊은 복사하여 모든 자손 노드가 포함된 사본 생성
+      const $deepClone = $fruits.cloneNode(true);
+      // 사본 요소 노드를 #fruits 요소 노드의 마지막 노드로 추가
+      $fruits.appendChild($deepClone);
+    </script>
+  </html>
+  ```
+  ```
+  - Apple
+  - Banana
+    - Apple
+    - Banana
+  ```
+
+<br>
+
+### 6.8. 노드 교체
+- Node.prototype.replaceChild(newChild, oldChild)
+- 이 메서드는 자신을 호출한 노드의 자식 노드를 다른 노드로 교체
+- 첫 번째 매개변수 newChild : 교체할 새로운 노드 전달
+- 두 번째 매개변수 oldChild : 이미 존재하는 교체될 노드 전달
+  - oldChild 매개변수에 인수로 전달한 노드는 replaceChild 메서드를 호출한 노드의 자식 노드
+- replaceChild 메서드는 자신을 호출한 노드의 자식 노드인 oldChild 노드 -> newChild 노드로 교체
+  - oldChild 노드는 DOM에서 제거
+  ```HTML
+  <!DOCTYPE html>
+  <html>
+    <body>
+      <ul id="fruits">
+        <li>Apple</li>
+      </ul>
+    </body>
+    <script>
+      // 요소 노드 생성
+      const $fruits = document.getElementById('fruits');
+      
+      // 기존 노드와 교체할 요소 노드 생성
+      const $newChild = document.createElement('li');
+      $newChild.textContent = 'Banana';
+
+      // #fruits 요소 노드의 첫 번째 자식 요소 노드를 $newChild 요소 노드로 교체
+      $fruits.replaceChild($newChild, $fruits.firstElementChild);
+    </script>
+  </html>
+  ```
+  ```
+  - Banana
+  ```
+
+<br>
+
+### 6.9. 노드 삭제
+- Node.prototype.removeChild(child)
+- 이 메서드는 child 매개변수에 인수로 전달한 노드를 DOM에서 삭제
+  - 인수로 전달한 노드는 removeChild 메서드를 호출한 노드의 자식 노드
+  ```html
+  <!DOCTYPE html>
+  <html>
+    <body>
+      <ul id="fruits">
+        <li>Apple</li>
+        <li>Banana</li>
+      </ul>
+    </body>
+    <script>
+      // 요소 노드 생성
+      const $fruits = document.getElementById('fruits');
+      
+      // #fruits 요소 노드의 마지막 요소를 DOM에서 제거
+      $fruits.removeChild($fruits.lastElementChild);
+    </script>
+  </html>
+  ```
+  ```
+  - Apple
+  ```
+
+<br>
+<br>
