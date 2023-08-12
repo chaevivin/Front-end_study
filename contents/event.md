@@ -517,3 +517,761 @@
 
 <br>
 <br>
+
+## 6. 이벤트 전파
+- 이벤트 전파 : DOM 트리 상에 존재하는 DOM 요소 노드에서 발생한 이벤트는 DOM 트리를 통해 전파
+  ```HTML
+  <!DOCTYPE html>
+  <html>
+    <body>
+      <ul id="fruits">
+        <li id="apple">Apple</li>
+        <li id="banana">Banana</li>
+        <li id="orange">Orange</li>
+      </ul>
+    </body>
+  </html>
+  ```
+  - ul 요소의 두 번째 자식 요소인 li 요소를 클릭하면 클릭 이벤트가 발생
+  - **이때 생성된 이벤트 객체는 이벤트를 발생시킨 DOM 요소인 이벤트 타깃을 중심으로 DOM 트리를 통해 전파**
+- 이벤트 전파 단계 : 이벤트 객체가 전파되는 방향 기준
+  - 캡처링 단계 : 이벤트가 상위 요소에서 하위 요소 방향으로 전파
+  - 타깃 단계 : 이벤트가 이벤트 타깃에 도달
+  - 버블링 단계 : 이벤트가 하위 요소에서 상위 요소 방향으로 전파
+  ```HTML
+  <!DOCTYPE html>
+  <html>
+    <body>
+      <ul id="fruits">
+        <li id="apple">Apple</li>
+        <li id="banana">Banana</li>
+        <li id="orange">Orange</li>
+      </ul>
+      <script>
+        const $fruits = document.getElementById('fruits');
+
+        // #fruits 요소의 하위 요소인 li 요소를 클릭한 경우
+        $fruits.addEventListener('click', e => {
+          console.log(`이벤트 단계: ${e.eventPhase}`);    // 버블링 단계
+          console.log(`이벤트 타깃: ${e.target}`);    // [object HTMLLIElement]
+          console.log(`커런트 타깃: ${e.currentTarget}`);    // [object HTMLUListElement]
+        });
+      </script>
+    </body>
+  </html>
+  ```
+  - ul 요소의 하위 요소인 li 요소를 클릭하여 이벤트 발생
+  - 이벤트 타깃(event.target) -> li 요소, 커런트 타깃(event.currentTarget) -> ul 요소
+  - li 요소를 클릭하면 클릭 이벤트가 발생하여 클릭 이벤트 객체가 생성되고 클릭된 li 요소가 이벤트 타깃이 됨
+    - 캡처링 단계 : 클릭 이벤트 객체는 window에서 시작해서 이벤트 타깃 방향으로 전파
+    - 타깃 단계 : 이벤트 객체는 이벤트를 발생시킨 이벤트 타깃에 도달
+    - 버블링 단계 : 이벤트 객체는 이벤트 타깃에서 시작해서 window 방향으로 전파
+- 이벤트 핸들러 어트리뷰트/프로퍼티 방식으로 등록한 이벤트 핸들러 -> 타깃 단계와 버블링 단계의 이벤트만 캐치
+- addEventListener 메서드 방식으로 등록한 이벤트 핸들러 -> 타깃 단계와 버블링 단계뿐만 아니라 캡처링 단계의 이벤트도 선별적으로 캐치 가능
+  - 캡처링 단계의 이벤트를 캐치하려면 addEventListener 메서드의 3번째 인수로 true 전달
+  - 3번째 인수를 생략하거나 false 전달하면 타깃 단계와 버블링 단계의 이벤트만 캐치 가능
+
+<br>
+
+```html
+<!DOCTYPE html>
+  <html>
+    <body>
+      <ul id="fruits">
+        <li id="apple">Apple</li>
+        <li id="banana">Banana</li>
+        <li id="orange">Orange</li>
+      </ul>
+      <script>
+        const $fruits = document.getElementById('fruits');
+        const $banana = document.getElementById('banana');
+
+        // #fruits 요소의 하위 요소인 li 요소를 클릭한 경우 캡처링 단계의 이벤트를 캐치
+        $fruits.addEventListener('click', e => {
+          console.log(`이벤트 단계: ${e.eventPhase}`);    // 캡처링 단계
+          console.log(`이벤트 타깃: ${e.target}`);    // [object HTMLLIElement]
+          console.log(`커런트 타깃: ${e.currentTarget}`);    // [object HTMLUListElement]
+        });
+
+        // 타깃 단계의 이벤트를 캐치
+        $banana.addEventListener('click', e => {
+          console.log(`이벤트 단계: ${e.eventPhase}`);    // 타깃 단계
+          console.log(`이벤트 타깃: ${e.target}`);    // [object HTMLLIElement]
+          console.log(`커런트 타깃: ${e.currentTarget}`);    // [object HTMLUListElement]
+        });
+
+        // 버블링 단계의 이벤트를 캐치
+        $fruits.addEventListener('click', e => {
+          console.log(`이벤트 단계: ${e.eventPhase}`);    // 버블링 단계
+          console.log(`이벤트 타깃: ${e.target}`);    // [object HTMLLIElement]
+          console.log(`커런트 타깃: ${e.currentTarget}`);    // [object HTMLUListElement]
+        });
+      </script>
+    </body>
+  </html>
+```
+위 예제를 살펴보면,
+- 이벤트 핸들러가 캡처링 단계의 이벤트를 캐치하도록 설정 
+  - 이벤트 핸들러는 window에서 시작해서 이벤트 타깃 방향으로 전파되는 이벤트 객체 캐치
+  - 이벤트를 발생시킨 이벤트 타깃과 이벤트 핸들러가 바인딩된 커런트 타깃이 같은 DOM 요소라면 이벤트 핸들러는 타깃 단계의 이벤트 객체 캐치
+- **이벤트는 이벤트를 발생시킨 이벤트 타깃은 물론 상위 DOM 요소에서도 캐치 가능**
+  - DOM 트리를 통해 전파되는 이벤트 패스에 위치한 모든 DOM 요소에서 캐치 가능
+
+<br>
+
+- 대부분의 이벤트는 캡처링과 버블링을 통해 전파
+  - 버블링으로 전파되지 않는 이벤트
+    - 포커스 이벤트 : focus/blur
+    - 리소스 이벤트 : load/unload/abort/error
+    - 마우스 이벤트 : mouseenter/mouseleave
+  - 버블링되지 않는 이벤트는 이벤트 객체의 공통 프로퍼티 event.bubbles의 값이 모두 false
+  - 버블링되지 않는 이벤트는 이벤트 타깃의 상위 요소에서 이벤트를 캐치하려면 캡처링 단계의 이벤트를 캐치
+  - 버블링되지 않는 이벤트를 상위 요소에서 캐치할 경우 대체할 수 있는 이벤트 존재
+    - focus/blur -> focusin/focusout
+    - mouseenter/mouseleave -> mouseover/mouseout
+- 캡처링 단계의 이벤트와 버블링 단계의 이벤트를 캐치하는 이벤트 핸들러가 혼용되는 경우
+  ```html
+  <!DOCTYPE html>
+  <html>
+    <head>
+    <style>
+        html, body { height: 100%; }
+      </style>
+    <body>
+      <p>버블링과 캡처링 이벤트 <button>버튼</button></p>
+      <script>
+        // 버블링 단계의 이벤트를 캐치
+        document.body.addEventListener('click', () => {
+          console.log('Handler for body');
+        });
+
+        // 캡처링 단계의 이벤트를 캐치
+        document.querySelector('p').addEventListener('click', () => {
+          console.log('Handler for paragraph');
+        });
+
+        // 타깃 단계의 이벤트를 캐치
+        document.querySelector('button').addEventListener('click', () => {
+          console.log('Handler for button');
+        });
+      </script>
+    </body>
+  </html>
+  ```
+  - body 요소는 버블링 단계의 이벤트만 캐치
+  - p 요소는 캡처링 단계의 이벤트만 캐치
+  - button 요소에서 클릭 이벤트가 발생했을 때
+    - 캡처링 단계를 캐치하는 p 요소의 이벤트 핸들러 호출
+    - 그 후 버블링 단계의 이벤트를 캐치하는 body요소의 이벤트 핸들러 순차적으로 호출
+    ```
+    Handler for paragraph
+    Handler for button
+    Handler for body
+    ```
+  - p 요소에서 클릭 이벤트가 발생하면 캡처링 단계를 캐치하는 p 요소의 이벤트 핸들러가 호출
+  - 버블링 단계를 캐치하는 body 요소의 이벤트 핸들러가 순차적으로 호출
+    ```
+    Handler for paragraph
+    Handler for body
+    ```
+
+<br>
+<br>
+
+## 7. 이벤트 위임
+- 사용자가 내비게이션 아이템(li 요소)을 클릭하여 선택하면 현재 선택된 내비게이션 아이템에 active 클래스를 추가하고 그 외의 모든 내비게이션 아이템의 active 클래스를 제거하는 예제
+  ```html
+  <!DOCTYPE html>
+  <html>
+    <head>
+      <style>
+        #fruits {
+          display: flex;
+          list-style-type: none;
+          padding: 0;
+        }
+
+        #fruits li {
+          width: 100px;
+          cursor: pointer;
+        }
+
+        #fruits .active {
+          color: red;
+          text-decoration: underline;
+        }
+      </style>
+    </head>
+    <body>
+      <nav>
+        <ul id="fruits">
+          <li id="apple" class="active">Apple</li>
+          <li id="banana">Banana</li>
+          <li id="orange">Orange</li>
+        </ul>
+      </nav>
+      <div>선택된 내비게이션 아이템: <em class="msg">apple</em></div>
+      <script>
+        const $fruits = document.getElementById('fruits');
+        const $msg = document.querySelector('.msg');
+
+        function activate({ target }) {
+          [...$fruits.children].forEach($fruits => {
+            $fruits.classList.toggle('active', $fruits === target);
+            $msg.textContent = target.id;
+          });
+        }
+
+        // 모든 li 요소에 이벤트 핸들러 등록
+        document.getElementById('apple').onclick = activate;
+        document.getElementById('banana').onclick = activate;
+        document.getElementById('orange').onclick = activate;
+      </script>
+    </body>
+  </html>
+  ```
+  - 모든 내비게이션 아이템이 클릭 이벤트에 반응하도록 모든 내비게이션 아이템에 이벤트 핸들러인 activate 등록
+  - 만약 내비게이션 아이템이 100개라면 100개의 이벤트 핸들러 등록 -> 많은 DOM 요소에 이벤트 핸들러를 등록하므로 성능 저하의 원인, 유지 보수에도 부적합
+
+<br>
+
+- 이벤트 위임 : 여러 개의 하위 DOM 요소에 각각 이벤트 핸들러를 등록하는 대신 하나의 상위 DOM 요소에 이벤트 핸들러를 등록하는 방법
+  - 이벤트 위임을 통해 상위 DOM 요소에 이벤트 핸들러를 등록하면 여러 개의 하위 DOM 요소에 이벤트 핸들러를 등록할 필요 X
+  - 동적으로 하위 DOM 요소를 추가하더라도 일일이 추가된 DOM 요소에 이벤트 핸들러를 등록할 필요 X
+  ```html
+  <!DOCTYPE html>
+  <html>
+    <head>
+      <style>
+        #fruits {
+          display: flex;
+          list-style-type: none;
+          padding: 0;
+        }
+
+        #fruits li {
+          width: 100px;
+          cursor: pointer;
+        }
+
+        #fruits .active {
+          color: red;
+          text-decoration: underline;
+        }
+      </style>
+    </head>
+    <body>
+      <nav>
+        <ul id="fruits">
+          <li id="apple" class="active">Apple</li>
+          <li id="banana">Banana</li>
+          <li id="orange">Orange</li>
+        </ul>
+      </nav>
+      <div>선택된 내비게이션 아이템: <em class="msg">apple</em></div>
+      <script>
+        const $fruits = document.getElementById('fruits');
+        const $msg = document.querySelector('.msg');
+
+        function activate({ target }) {
+          // 이벤트를 발생시킨 요소(target)가 ul#fruits의 자식 요소가 아니라면 무시
+          if (!target.matches('#fruits > li')) return;
+
+          [...$fruits.children].forEach($fruits => {
+            $fruits.classList.toggle('active', $fruits === target);
+            $msg.textContent = target.id;
+          });
+        }
+
+        // 이벤트 위임 : 상위 요소(ul#fruits)는 하위 요소의 이벤트 캐치
+        $fruits.onclick = activate;
+      </script>
+    </body>
+  </html>
+  ```
+- 이벤트 위임을 통해 하위 DOM 요소에서 발생한 이벤트를 처리할 때 주의할 점
+  - 상위 요소에 이벤트 핸들러를 등록하기 때문에 이벤트 타깃, 즉 이벤트를 실제로 발생시킨 DOM 요소가 개발자가 기대한 DOM 요소가 아닐 수도 있음
+  - 따라서 이벤트에 반응이 필요한 DOM 요소에 한정하여 이벤트 핸들러가 실행되도록 이벤트 타깃 검사 필요
+- Element.prototype.matches
+  - 이 메서드는 인수로 전달된 선택자에 의해 특정 노드를 탐색 가능한 지 확인
+    ```js
+    function activate({ target }) {
+      // 이벤트를 발생시킨 요소(target)가 ul#fruits의 자식 요소가 아니라면 무시
+      if (!target.matches('#fruits > li')) return;
+      ...
+    ```
+- 이벤트 위임을 통해 DOM 요소에 이벤트를 바인딩한 경우 이벤트 객체의 target 프로퍼티와 currentTarget 프로퍼티는 다른 DOM 요소를 가리킬 수 있음
+  - $fruits 요소의 하위 요소에서 클릭 이벤트가 발생한 경우 이벤트 객체의 currentTarget 프로퍼티와 target 프로퍼티는 다른 DOM 요소를 가리킴
+
+<br>
+
+## 8. DOM 요소의 기본 동작 조작
+
+<BR>
+
+### 8.1. DOM 요소의 기본 동작 중단
+- DOM 요소는 저마다 기본 동작이 있음
+- 이벤트 객체의 preventDefault 메서드는 이러한 DOM 요소의 기본 동작 중단
+  ```html
+  <!DOCTYPE html>
+  <html>
+    <body>
+      <a href="https://www.google.com">go</a>
+      <input type="checkbox">
+      <script>
+        document.querySelector('a').onclick = e => {
+          // a 요소의 기본 동작 중단
+          e.preventDefault();
+        };
+
+        document.querySelector('input[type=checkbox]').onclick = e => {
+          // checkbox 요소의 기본 동작 중단
+          e.preventDefault();
+        };
+      </script>
+    </body>
+  </html>
+  ```
+
+<br>
+
+### 8.2. 이벤트 전파 방지
+- 이벤트 객체의 stopPropagation 메서드는 이벤트 전파 중지
+  ```html
+  <!DOCTYPE html>
+  <html>
+    <body>
+      <div class="container">
+        <button class="btn1">Button1</button>
+        <button class="btn2">Button2</button>
+        <button class="btn3">Button3</button>
+      </div>
+      <script>
+        // 이벤트 위임. 클릭된 하위 버튼 요소의 color를 변경
+        document.querySelector('.container').onclick = ({ target }) => {
+          if (!target.matches('.container > button')) return;
+          target.style.color = 'red';
+        };
+
+        // .btn2 요소는 이벤트를 전파하지 않으므로 상위 요소에서 이벤트 캐치 불가
+        document.querySelector('.btn2').onclick = e => {
+          e.stopPropagation();    // 이벤트 전파 중단
+          e.target.style.color = 'blue';
+        };
+      </script>
+    </body>
+  </html>
+  ```
+  - 상위 DOM 요소인 container 요소에 이벤트 위임
+    - 하위 DOM 요소에서 발생한 클릭 이벤트를 상위 DOM 요소인 container 요소가 캐치하여 이벤트 처리
+    - 하위 요소 중에서 btn2 요소는 자체적으로 이벤트 처리 -> btn2 요소는 자신이 발생시킨 이벤트가 전파되는 것을 중단하여 자신에게 바인딩된 이벤트 핸들러만 실행
+- stopPropagation 메서드는 하위 DOM 요소의 이벤트를 개별적으로 처리하기 위해 이벤트 전파 중단
+
+<br>
+<br>
+
+## 9. 이벤트 핸들러 내부의 this
+
+<br>
+
+### 9.1. 이벤트 핸들러 어트리뷰트 방식
+```html
+<!DOCTYPE html>
+<html>
+  <body>
+    <button onclick="handleClick()">Click</button>
+    <script>
+      function handleClick() {
+        console.log(this);    // window
+      }
+    </script>
+  </body>
+</html>
+```
+위 예제를 살펴보면,
+- handleClick 함수 내부의 this는 전역 객체 window를 가리킴
+- 이벤트 핸들러 어트리뷰트의 값으로 지정한 문자열은 암묵적으로 생성되는 이벤트 핸들러 문
+  - handleClick 함수는 이벤트 핸들러에 의해 일반 함수로 호출
+  - 일반 함수로서 호출되는 함수 내부의 this는 전역 객체를 가리킴
+
+<br>
+
+```html
+<!DOCTYPE html>
+<html>
+  <body>
+    <button onclick="handleClick(this)">Click</button>
+    <script>
+      function handleClick(button) {
+        console.log(button);    // 이벤트를 바인딩한 button 요소
+        console.log(this);    // window
+      }
+    </script>
+  </body>
+</html>
+```
+위 예제를 살펴보면,
+- 이벤트 핸들러를 호출할 때 인수로 전달한 this는 이벤트를 바인딩한 DOM 요소를 가리킴
+- handleClick 함수에 전달한 this는 암묵적으로 생성된 이벤트 핸들러 내부의 this
+  - 이벤트 핸들러 어트리뷰트 방식에 의해 암묵적으로 생성된 이벤트 핸들러 내부의 this는 이벤트를 바인딩한 DOM 요소를 가리킴
+  - 이벤트 핸들러 프로퍼티 방식과 동일
+
+<br>
+
+### 9.2. 이벤트 핸들러 프로퍼티 방식과 addEventListener 메서드 방식
+- 이벤트 핸들러 프로퍼티 방식과 addEventListener 메서드 방식 모두 이벤트 핸들러 내부의 this는 이벤트를 바인딩한 DOM 요소를 가리킴
+  - 이벤트 핸들러 내부의 this = 이벤트 객체의 currentTarget 프로퍼티
+  ```html
+  <!DOCTYPE html>
+  <html>
+    <body>
+      <button class="btn1">0</button>
+      <button class="btn2">0</button>
+      <script>
+        const $button1 = document.querySelector('.btn1');
+        const $button2 = document.querySelector('.btn2');
+
+        // 이벤트 핸들러 프로퍼티 방식
+        $button1.onclick = function (e) {
+          // this는 이벤트를 바인딩한 DOM 요소를 가리킴
+          console.log(this);    // $button1
+          console.log(e.currentTarget);    // $button1
+          console.log(this === e.currentTarget);    // true
+
+          ++this.textContent;    // 1증가
+        }
+
+        // addEventListener 방식
+        $button2.addEventListener('click', function (e) {
+          // this는 이벤트를 바인딩한 DOM 요소를 가리킴
+          console.log(this);    // $button2
+          console.log(e.currentTarget);    // $button2
+          console.log(this === e.currentTarget);    // true
+
+          ++this.textContent;    // 1증가
+        });
+      </script>
+    </body>
+  </html>
+  ```
+
+<br>
+
+- 화살표 함수로 정의한 이벤트 핸들러 내부의 this는 상위 스코프의 this를 가리킴
+  - 화살표 함수는 함수 자체의 this 바인딩을 갖지 않음
+  ```html
+  <!DOCTYPE html>
+  <html>
+    <body>
+      <button class="btn1">0</button>
+      <button class="btn2">0</button>
+      <script>
+        const $button1 = document.querySelector('.btn1');
+        const $button2 = document.querySelector('.btn2');
+
+        // 이벤트 핸들러 프로퍼티 방식
+        $button1.onclick = e => {
+          // 화살표 함수 내부의 this는 상위 스코프의 this를 가리킴
+          console.log(this);    // window
+          console.log(e.currentTarget);    // $button1
+          console.log(this === e.currentTarget);    // false
+
+          ++this.textContent;    // NaN (undefined + 1)
+        }
+
+        // addEventListener 방식
+        $button2.addEventListener('click', e => {
+          // 화살표 함수 내부의 this는 상위 스코프의 this를 가리킴
+          console.log(this);    // window
+          console.log(e.currentTarget);    // $button2
+          console.log(this === e.currentTarget);    // false
+
+          ++this.textContent;    // NaN (undefined + 1)
+        });
+      </script>
+    </body>
+  </html>
+  ```
+
+<br>
+
+- 클래스에서 이벤트 핸들러 바인딩하는 경우 this에 주의
+  ```html
+  <!DOCTYPE html>
+  <html>
+    <body>
+      <button class="btn">0</button>
+      <script>
+        class App {
+          constructor() {
+            this.$button = document.querySelector('.btn');
+            this.count = 0;
+
+            // increase 메서드를 이벤트 핸들러로 등록
+            this.$button.onclick = this.increase;
+          }
+
+          increase() {
+            // 이벤트 핸들러 increase 내부의 this는 DOM 요소(this.$button)를 가리킴
+            // 따라서 this.$button은 this.$button.$button과 같음
+            this.$button.textContent = ++this.count;    // TypeError: Cannot set property 'textContent' of undefined
+          }
+        }
+
+        new App();
+      </script>
+    </body>
+  </html>
+  ```
+  - increase 메서드 내부의 this는 클래스가 생성할 인스턴스를 가리키지 않음
+  - 이벤트 핸들러 내부의 this는 이벤트를 바인딩한 DOM 요소를 가리키기 때문에 increase 메서드 내부의 this는 this.$button을 가리킴
+  - increase 메서드를 이벤트 핸들러로 바인딩할 때 bind 메서드를 사용해 this를 전달하여 increase 메서드 내부의 this가 클래스가 생성할 인스턴스를 가리키도록 해야 함
+  ```html
+  <!DOCTYPE html>
+  <html>
+    <body>
+      <button class="btn">0</button>
+      <script>
+        class App {
+          constructor() {
+            this.$button = document.querySelector('.btn');
+            this.count = 0;
+
+            // increase 메서드를 이벤트 핸들러로 등록
+            // this.$button.onclick = this.increase;
+
+            // increase 메서드 내부의 this가 인스턴스를 가리키도록 해야 함
+            this.$button.onclick = this.increase.bind(this);
+          }
+
+          increase() {
+            this.$button.textContent = ++this.count;
+          }
+        }
+
+        new App();
+      </script>
+    </body>
+  </html>
+  ```
+- 클래스 필드에 할당한 화살표 함수를 이벤트 핸들러로 등록하여 이벤트 핸들러 내부의 this가 인스턴스를 가리키도록 할 수 있음
+  - 이벤트 핸들러 increase는 프로토타입 메서드가 아니라 인스턴스 메서드
+  ```html
+  <!DOCTYPE html>
+  <html>
+    <body>
+      <button class="btn">0</button>
+      <script>
+        class App {
+          constructor() {
+            this.$button = document.querySelector('.btn');
+            this.count = 0;
+
+            // 화살표 함수인 increase를 이벤트 핸들러로 등록
+            this.$button.onclick = this.increase;
+          }
+
+          // 클래스 필드 정의
+          // increase는 인스턴스 메서드이며 내부의 this는 인스턴스를 가리킴
+          increase = () => this.$button.textContent = ++this.count;
+        }
+
+        new App();
+      </script>
+    </body>
+  </html>
+  ```
+
+<br>
+<br>
+
+## 10. 이벤트 핸들러에 인수 전달
+- 함수에 인수를 전달하려면 함수를 호출할 때 전달
+- 이벤트 핸들러 어트리뷰트 방식은 함수 호출문을 사용할 수 있기 때문에 인수 전달 가능
+- 이벤트 핸들러 프로퍼티 방식과 addEventListener 메서드 방식의 경우 이벤트 핸들러를 브라우저가 호출하기 때문에 함수 호출문이 아닌 함수 자체를 등록 -> 인수 전달 불가
+  - 이벤트 핸들러 내부에서 함수를 호출하면서 인수 전달하면 가능
+  ```html
+  <!DOCTYPE html>
+  <html>
+    <body>
+      <label>User name <input type='text'></label>
+      <em class='message'></em>
+      <script>
+        const MIN_USER_NAME_LENGTH = 5;    // 이름의 최소 길이
+        const $input = document.querySelector('input[type=text]');
+        const $msg = document.querySelector('.message');
+
+        const checkUserNameLength = min => {
+          $msg.textContent = $input.value.length < min ? `이름은 ${min}자 이상 입력해주세요` : '';
+        };
+
+        // 이벤트 핸들러 내부에서 함수 호출하면서 인수 전달
+        $input.onblur = () => {
+          checkUserNameLength(MIN_USER_NAME_LEGTH);
+        };
+      </script>
+    </body>
+  </html>
+  ```
+  - 이벤트 핸들러를 반환하는 함수를 호출하면서 인수 전달 가능
+    - checkUserNameLength 함수는 함수를 반환하기 때문에 $input.onblur에는 checkUserNameLength 함수가 반환하는 함수 바인딩
+  ```html
+  <!DOCTYPE html>
+  <html>
+    <body>
+      <label>User name <input type='text'></label>
+      <em class='message'></em>
+      <script>
+        const MIN_USER_NAME_LENGTH = 5;    // 이름의 최소 길이
+        const $input = document.querySelector('input[type=text]');
+        const $msg = document.querySelector('.message');
+
+        // 이벤트 핸들러를 반환하는 함수
+        const checkUserNameLength = min => e => {
+          $msg.textContent = $input.value.length < min ? `이름은 ${min}자 이상 입력해주세요` : '';
+        };
+
+        // 이벤트 핸들러를 반환하는 함수
+        $input.onblur = checkUserNameLength(MIN_USER_NAME_LEGTH);
+      </script>
+    </body>
+  </html>
+  ```
+
+<br>
+<br>
+
+## 11. 커스텀 이벤트
+
+<br>
+
+### 11.1. 커스텀 이벤트 생성
+- 이벤트가 발생하면 암묵적으로 생성되는 이벤트 객체는 발생한 이벤트 종류에 따라 이벤트 타입 결정
+- 하지만 Event, UIEvent, MouseEvent 같은 이벤트 생성자 함수를 호출하여 명시적으로 생성한 이벤트 객체는 임의의 이벤트 타입 지정 가능 
+- 커스텀 이벤트 : 개발자의 의도로 생성된 이벤트
+- 이벤트 생성자 함수는 첫 번째 인수로 이벤트 타입을 나타내는 문자열을 전달받음
+  - 이벤트 타입을 나타내는 문자열
+    - 기존 이벤트 타입
+    - 임의의 문자열 사용하여 새로운 이벤트 타입 지정 -> CustomEvent 이벤트 생성자 함수 사용
+    ```js
+    // KeyboardEvent 생성자 함수로 keyup 이벤트 타입의 커스텀 이벤트 객체 생성
+    const keyboardEvent = new KeyboardEvent('keyup');
+    console.log(keyboardEvent.type);    // keyup
+
+    // CustomEvent 생성자 함수로 foo 이벤트 타입의 커스텀 이벤트 객체 생성
+    const customEvent = new CustomEvent('foo');
+    console.log(customEvent.type);    // foo
+    ```
+- 생성된 커스텀 이벤트 객체는 버블링되지 않으며 preventDefault 메서드로 취소 불가능
+  - 커스텀 이벤트 객체는 bubbles와 cancelable 프로퍼티 값 = false
+  ```js
+  // MouseEvent 생성자 함수로 click 이벤트 타입의 커스텀 이벤트 객체 생성
+  const customEvent = new MouseEvent('click');
+  console.log(customEvent.type);    // click
+  console.log(customEvent.bubbles);    // false
+  console.log(customEvent.cancelable);    // false
+  ```
+  - 커스텀 이벤트 객체의 bubbles와 cancelable 프로퍼티를 true로 설정하려면 이벤트 생성자 함수의 두 번째 인수로 bubbles 또는 cancelable 프로퍼티를 갖는 객체 전달
+  ```js
+  // MouseEvent 생성자 함수로 click 이벤트 타입의 커스텀 이벤트 객체 생성
+  const customEvent = new MouseEvent('click', {
+    bubbles: true,
+    cancelable: true
+  });
+
+  console.log(customEvent.bubbles);    // true
+  console.log(customEvent.cancelable);    // true
+  ```
+  - 커스텀 이벤트 객체에는 bubbles 또는 cancelable 프로퍼티뿐만 아니라 이벤트 타입에 따라 가지는 이벤트 고유의 프로퍼티 값 지정 가능
+  ```js
+  // MouseEvent 생성자 함수로 click 이벤트 타입의 커스텀 이벤트 객체 생성
+  const mouseEvent = new MouseEvent('click', {
+    bubbles: true,
+    cancelable: true,
+    clientX: 50,
+    clientY: 100
+  });
+
+  console.log(mouseEvent.clientX);    // 50
+  console.log(mouseEvent.clientY);    // 100
+
+  // keyboardEvent 생성자 함수로 keyup 이벤트 타입의 커스텀 이벤트 객체 생성
+  const keyboardEvent = new KeyboardEvent('keyup', { key: 'Enter' });
+
+  console.log(keyboardEvent.key);    // Enter
+  ```
+- 이벤트 생성자 함수로 생성한 커스텀 이벤트는 inTrusted 프로퍼티 값이 언제나 false
+  - 커스텀 이벤트가 아닌 사용자 행위에 의해 발생한 이벤트에 의해 생성된 이벤트 객체의 isTrusted 프로퍼티 값은 언제나 true
+  ```js
+  // InputEvent 생성자 함수로 foo 이벤트 타입의 커스텀 이벤트 객체 생성
+  const customEvent = new InputEvent('foo');
+  console.log(customEvent.isTrusted);    // false
+  ```
+
+<br>
+
+### 11.2. 커스텀 이벤트 디스패치
+- 생성된 커스텀 이벤트는 dispatchEvent 메서드로 디스패치(이벤트 발생시티는 행위) 가능
+- dispatchEvent 메서드에 이벤트 객체를 인수로 전달하면서 호출하면 인수로 전달한 이벤트 타입의 이벤트 발생
+  ```html
+  <!DOCTYPE html>
+  <html>
+    <body>
+      <button class='btn'>click</button>
+      <script>
+        const $button = document.querySelector('.btn');
+
+        // 버튼 요소에 foo 커스텀 이벤트 핸들러 등록
+        // 커스텀 이벤트를 디스패치하기 전에 이벤트 핸들러 등록
+        $button.addEventListener('click', e => {
+          console.log(e);    // MouseEvent {isTrusted: false, screenX: 0, ... }
+          alert(`${e} clicked`);
+        });
+
+        // 커스텀 이벤트 생성
+        const customEvent = new MouseEvent('click');
+
+        // 커스텀 이벤트 디스패치(동기 처리). click 이벤트 발생
+        $button.dispatchEvent(customEvent);
+      </script>
+    </body>
+  </html>
+  ```
+- 이벤트 핸들러는 비동기 처리 방식으로 동작
+- dispatchEvent 메서드는 이벤트 핸들러를 동기 처리 방식으로 호출
+  - dispatchEvent 메서드를 호출하면 커스텀 이벤트에 바인딩된 이벤트 핸들러를 직접 호출하는 것과 같음
+  - dispatchEvent 메서드로 이벤트를 디스패치 하기 전에 커스텀 이벤트를 처리할 이벤트 핸들러를 등록
+- CustomEvent 이벤트 생성자 함수에는 두 번째 인수로 이벤트와 함께 전달하고 싶은 정보를 담은 detail 프로퍼티를 포함하는 객체 전달 가능
+  - 이 정보는 이벤트 객체의 detail 프로퍼티(e.detail)에 담겨 전달
+  ```html
+  <!DOCTYPE html>
+  <html>
+    <body>
+      <button class='btn'>click</button>
+      <script>
+        const $button = document.querySelector('.btn');
+
+        // 버튼 요소에 foo 커스텀 이벤트 핸들러 등록
+        // 커스텀 이벤트를 디스패치하기 전에 이벤트 핸들러 등록
+        $button.addEventListener('click', e => {
+          // e.detail에는 CustomEvent 함수의 두 번째 인수로 전달한 정보 담겨있음
+          alert(e.detail.message);
+        });
+
+        // CustomEvent 생성자 함수로 foo 이벤트 타입의 커스텀 이벤트 객체 생성
+        const customEvent = new CustomEvent('foo', {
+          detail: { message: 'Hello' }    // 이벤트와 함께 전달하고 싶은 정보
+        });
+
+        // 커스텀 이벤트 디스패치
+        $button.dispatchEvent(customEvent);
+      </script>
+    </body>
+  </html>
+  ```
+- 임의의 이벤트 타입을 지정하여 커스텀 이벤트 객체를 생성한 경우 반드시 addEventListener 메서드 방식으로 이벤트 핸들러 등록
+  - 이벤트 핸들러 어트리뷰트/프로퍼티 방식을 사용하지 못하는 이유
+    - 'on + 이벤트 타입'으로 이루어진 이벤트 핸들러 어트리뷰트/프로퍼티가 요소 노드에 존재 X -> 이벤트 핸들러 등록 불가
+
+<br>
+<br>
