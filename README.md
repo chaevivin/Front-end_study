@@ -50,6 +50,7 @@
 - [Set과 Map (Set and Map)](https://github.com/chaevivin/JavaScript_study/blob/main/contents/Set_and_Map.md)
 - [브라우저의 렌더링 과정 (browser rendering process)](https://github.com/chaevivin/JavaScript_study/blob/main/contents/browser_rendering_process.md)
 - [DOM](https://github.com/chaevivin/JavaScript_study/blob/main/contents/DOM.md)
+- [타이머 (timer)](https://github.com/chaevivin/JavaScript_study/blob/main/contents/timer.md)
 
 <br>
 <br>
