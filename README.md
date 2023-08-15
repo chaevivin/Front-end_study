@@ -52,6 +52,7 @@
 - [DOM](https://github.com/chaevivin/JavaScript_study/blob/main/contents/DOM.md)
 - [타이머 (timer)](https://github.com/chaevivin/JavaScript_study/blob/main/contents/timer.md)
 - [비동기 프로그래밍 (asynchoronous programming)](https://github.com/chaevivin/JavaScript_study/blob/main/contents/asynchronous_programming.md)
+- [Ajax](https://github.com/chaevivin/JavaScript_study/blob/main/contents/ajax.md)
 
 <br>
 <br>
