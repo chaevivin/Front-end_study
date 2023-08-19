@@ -7,7 +7,9 @@
 <br>
 
 # 모던 JavaScript Deep Dive 공부
-책 모던 자바스크립트 Deep Dive를 읽고 공부한 자바스크립트 내용을 정리
+- 책 모던 자바스크립트 Deep Dive를 읽고 공부한 자바스크립트 내용을 정리하였습니다.
+- 매일 한 챕터씩 내용을 업데이트하였습니다. (내용이 많으면 2-3번에 나눠 업데이트)
+- 웹 개발에서 중요한 언어는 자바스크립트입니다. 자바스크립트의 문법을 제대로 공부하여 조금 더 유연하게 코딩하기 위해 공부를 진행하고 있습니다.
 
 </div>
 
@@ -53,6 +55,7 @@
 - [타이머 (timer)](https://github.com/chaevivin/JavaScript_study/blob/main/contents/timer.md)
 - [비동기 프로그래밍 (asynchoronous programming)](https://github.com/chaevivin/JavaScript_study/blob/main/contents/asynchronous_programming.md)
 - [Ajax](https://github.com/chaevivin/JavaScript_study/blob/main/contents/ajax.md)
+- [REST API](https://github.com/chaevivin/JavaScript_study/blob/main/contents/REST_API.md)
 
 <br>
 <br>
