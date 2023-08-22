@@ -470,3 +470,418 @@ promiseGet('https://jsonplaceholder.typicode.com/posts/1')
 <br>
 <br>
 
+## 5. 프로미스 체이닝
+- 프로미스는 then, catch, finally 후속 처리 메서드를 통해 콜백 헬을 해결
+- 프로미스 체이닝(promise chaining): then, catch, finally 후속 처리 메서드는 언제나 프로미스를 반환하므로 연속적으로 호출 가능
+  ```js
+  const url = 'https://jsonplaceholder.typicode.com';
+
+  // id가 1인 post의 userId 취득
+  promiseGet(`${url}/posts/1`)
+    // 취득한 post의 userId로 user 정보를 취득
+    .then(({userId}) => promiseGet(`${url}/users/${userId}`))
+    .then(userInfo => console.log(userInfo))
+    .catch(err => console.error(err));
+  ```
+  - then -> then -> catch 순으로 후속 처리 메서드 호출
+  - 후속 처리 메서드의 콜백 함수는 프로미스의 비동기 처리 상태가 변경되면 선택적으로 호출
+
+  | 후속 처리 메서드 | 콜백 함수의 인수 | 후속 처리 메서드의 반환값 |
+  | :--- | :--- | :--- |
+  | then | promiseGet 함수가 반환한 프로미스가 resolve한 값(id가 1인 post) | 콜백 함수가 반환한 프로미스 |
+  | then | 첫 번째 then 메서드가 반환한 프로미스가 resolve한 값(post의 userId로 취득한 user 정보) | 콜백 함수가 반환한 값(undefined)을 resolve한 프로미스 |
+  | catch <br> ※ 에러가 발생하지 않으면 호출되지 않음 | promiseGet 함수 또는 앞선 후속 처리 메서드가 반환한 프로미스가 reject한 값 | 콜백 함수가 반환한 값(undefined)을 resolve한 프로미스 |
+- 프로미스는 프로미스 체이닝을 통해 비동기 처리 결과를 전달받아 후속 처리를 하므로 비동기 처리를 위한 콜백 패턴에서 발생하던 콜백 헬 발생 X
+  - 프로미스도 콜백 패턴을 사용하기 때문에 콜백 함수 사용
+- 콜백 패턴은 가독성이 좋지 않음 -> async/await를 통해 해결
+  - async/awiat: ES8에 도입된 것으로 프로미스의 후속 처리 메서드 없이 마치 동기 처리처럼 프로미스가 처리 결과를 반환하도록 구현 가능
+  ```js
+  const url = 'https://jsonplaceholder.typicode.com';
+
+  (async () => {
+    // id가 1인 post의 userId를 취득
+    const { userId } = await promiseGet(`${url}/posts/1`);
+    
+     // 취득한 post의 userId로 user 정보 취득
+     const userInfo = await promiseGet(`${url}/users/${userId}`);
+
+     console.log(userInfo);
+  })();
+  ```
+
+<br>
+<br>
+
+## 6. 프로미스의 정적 메서드
+- Promise는 주로 생성자 함수로 사용되지만 함수도 객체이므로 메서드를 가질 수 있음
+- Promise는 5가지 정적 메서드 제공
+
+<br>
+
+### 6.1. Promise.resolve / Promise.reject
+- 이 메서드는 이미 존재하는 값을 래핑하여 프로미스를 생성하기 위해 사용
+- Promise.resolve
+  - 이 메서드는 인수로 전달받은 값을 resolve하는 프로미스를 생성
+  ```js
+  // 배열을 resolve하는 프로미스를 생성
+  const resolvedPromise = Promise.resolve([1, 2, 3]);
+  resolvedPromise.then(console.log);    // [1, 2, 3]
+  ```
+  ```js
+  // 위와 동일하게 동작
+  const resolvedPromise = new Promise(resolve => resolve([1, 2, 3]));
+  resolvedPromise.then(console.log);    // [1, 2, 3]
+  ```
+- Promise.reject
+  - 이 메서드는 인수로 전달받은 값을 reject하는 프로미스 생성
+  ```js
+  // 에러 객체를 reject하는 프로미스를 생성
+  const rejectedPromise = Promise.reject(new Error('Error!'));
+  rejectedPromise.catch(console.log);    // Error: Error!
+  ```
+  ```js
+  // 위와 동일하게 동작
+  const rejectedPromise = new Promise((_, reject) => reject(new Error('Error!')));
+  rejectedPromise.catch(console.log);    // Error: Error!
+  ```
+
+<br>
+
+### 6.2. Promise.all
+- 이 메서드는 여러 개의 비동기 처리를 모두 병렬 처리할 때 사용
+  ```js
+  const requestData1 = () => 
+    new Promise(resolve => setTimeout(() => resolve(1), 3000));    // 첫 번째 비동기 처리에서 3초 소요
+  const requestData2 = () => 
+    new Promise(resolve => setTimeout(() => resolve(2), 2000));    // 두 번째 비동기 처리에서 2초 소요
+  const requestData3 = () => 
+    new Promise(resolve => setTimeout(() => resolve(3), 1000));    // 세 번째 비동기 처리에서 1초 소요
+
+  // 세 개의 비동기 처리를 순차적으로 처리
+  const res = [];
+  requestData1()
+    .then(data => {
+      res.push(data);
+      return requestData2();
+    })
+    .then(data => {
+      res.pusth(data);
+      return requestData3();
+    })
+    .then(data => {
+      res.push(data);
+      console.log(res);    // [1, 2, 3] => 약 6초 소요
+    })
+    .catch(console.error);
+  ```
+  - 세 개의 비동기 처리는 서로 의존하지 않고 개별적으로 수행
+  - 앞선 비동기 처리 결과를 다음 비동기 처리가 사용 X -> 순차적으로 처리할 필요 X
+
+<br>
+
+```js
+const requestData1 = () => 
+  new Promise(resolve => setTimeout(() => resolve(1), 3000));    // 첫 번째 비동기 처리에서 3초 소요
+const requestData2 = () => 
+  new Promise(resolve => setTimeout(() => resolve(2), 2000));    // 두 번째 비동기 처리에서 2초 소요
+const requestData3 = () => 
+  new Promise(resolve => setTimeout(() => resolve(3), 1000));    // 세 번째 비동기 처리에서 1초 소요
+
+// 세 개의 비동기 처리를 병렬로 처리
+Promise.all([requestData1(), requestData2(), requestData3()])
+  .then(console.log)    // [ 1, 2, 3 ] => 약 3초 소요
+  .catch(console.error);
+```
+위의 코드를 살펴보면,
+- Promise.all 메서드를 사용해 세 개의 비동기 처리를 병렬로 처리
+- Promise.all 메서드는 프로미스를 요소로 갖는 배열 등의 이터러블을 인수로 전달받음 -> 전달받은 모든 프로미스가 모두 fulfilled 상태 -> 모든 처리 결과를 배열에 저장해 새로운 프로미스 반환
+- 위의 각 프로미스가 다음과 같이 동작
+  - 첫 번째 프로미스는 3초 후에 1을 resolve
+  - 두 번째 프로미스는 2초 후에 2를 resolve
+  - 세 번째 프로미스는 1초 후에 3을 resolve
+- Promise.all 메서드는 인수로 전달받은 배열의 모든 프로미스가 모두 fulfilled 상태가 되면 종료
+  - 따라서 Promise.all 메서드가 종료하는 데 걸리는 시간은 가장 늦게 fulfilled 상태가 되는 프로미스의 처리 시간보다 조금 더 김
+- 모든 프로미스가 fulfilled 상태가 되면 resolve된 처리 결과를 모두 배열에 저장해 새로운 프로미스 반환
+  - 첫 번째 프로미스가 가장 나중에 fulfilled 상태가 되어도 Promise.all 메서드는 첫 번째 프로미스가 resolve한 처리 결과부터 차례대로 배열에 저장해 그 배열을 resolve하는 새로운 프로미스 반환 -> 처리 순서 보장
+
+<br>
+
+- Promise.all 메서드는 인수로 전달받은 배열의 프로미스가 하나라도 rejected 상태가 되면 나머지 프로미스가 fulfilled 상태가 되는 것을 기다리지 않고 즉시 종료
+  ```js
+  Promise.all([
+    new Promise((_, reject) => setTimeout(() => reject(new Error('Error1')), 3000)),
+    new Promise((_, reject) => setTimeout(() => reject(new Error('Error2')), 2000)),
+    new Promise((_, reject) => setTimeout(() => reject(new Error('Error3')), 1000))
+  ])
+    .then(console.log) 
+    .error(console.log);    // Error: Error3
+  ```
+  - 세 번째 프로미스가 가장 먼저 rejected 상태가 되므로 세 번째 프로미스가 reject한 에러가 catch 메서드로 전달
+- Promise.all 메서드는 인수로 전달받은 이터러블의 요소가 프로미스가 아닌 경우 Promise.resolve 메서드를 통해 프로미스를 래핑
+  ```js
+  Promise.all([
+    1,    // Promise.resolve(1)
+    2,    // Promise.resolve(2)
+    3,    // Promise.resolve(3)
+  ])
+    .then(console.log)    // [1, 2, 3]
+    .error(console.log); 
+  ```
+
+<br>
+
+```js
+
+```
+위의 코드를 살펴보면,
+- 깃허브 아이디로 깃허브 사용자 이름을 취득하는 3개의 비동기 처리를 모두 병렬로 처리하는 예제
+  ```js
+  // GET 요청을 위한 비동기 함수
+  const promiseGet = url => {
+    return new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      xhr,open('GET', url);
+      xhr.send();
+
+      xhr.onload = () => {
+        if (xhr.status === 200) {
+          // 성공적으로 응답을 전달받으면 resolve 함수 호출
+          resolve(JSON.parse(xhr.response));
+        } else {
+          // 에러 처리를 위해 reject 함수 호출
+          reject(new Error(xhr.status));
+        }
+      };
+    });
+  };
+
+  const githubIds = ['sdfsds', 'hdfjowasd', 'rfghjo'];
+
+  Promise.all(githubIds.map(id => promiseGet(`https://api.github.con/users/${id}`)))
+    // ['sdfsds', 'hdfjowasd', 'rfghjo'] => Promise [userInfo, userInfo, userInfo]
+    .then(users => users.map(user => user.name))
+    // [userInfo, userInfo, userInfo]
+    // -> Promise ['gggg', 'dddd', 'qqqq']
+    .then(console.log)
+    .catch(console.error);
+  ```
+  - Promise.all 메서드는 promiseGet 함수가 반환한 3개의 프로미스로 이루어진 배열을 인수로 전달받고 이 프로미스들이 모두 fulfilled한 상태가 되면 처리 결과를 배열에 저장해 새로운 프로미스를 반환
+  - Promise.all 메서드가 반환한 프로미스는 세 개의 사용자 객체로 이루어진 배열을 담고 있음 -> 이 배열은 첫 번째 then 메서드에 인수로 전달됨
+
+<br>
+
+### 6.3. Promise.race
+- Promise.race 메서드는 Promise.all 메서드와 동일하게 프로미스 요소를 갖는 배열 등의 이터러블을 인수로 전달받음
+- Promise.race 메서드는 Promise.all 메서드처럼 모든 프로미스가 fulfilled 상태가 되는 것을 기다리는 것이 아니라 가장 먼저 fulfilled 상태가 된 프로미스 처리 결과를 resolve하는 새로운 프로미스 반환
+  ```js
+  Promise.race([
+    new Promise(resolve => setTimeout(() => resolve(1), 3000)),    // 1
+    new Promise(resolve => setTimeout(() => resolve(2), 2000)),    // 2
+    new Promise(resolve => setTimeout(() => resolve(3), 1000))    // 3
+  ])
+    .then(console.log)    // 3
+    .error(console.log); 
+  ```
+- 프로미스가 rejected 상태가 되면 Promise.all 메서드와 동일하게 처리
+  - Promise.race 메서드에 전달된 프로미스가 하나라도 rejected 상태가 되면 에러를 reject 하는 새로운 프로미스를 즉시 반환
+  ```js
+  Promise.race([
+    new Promise((_, reject) => setTimeout(() => reject(new Error('Error1')), 3000)),
+    new Promise((_, reject) => setTimeout(() => reject(new Error('Error2')), 2000)),
+    new Promise((_, reject) => setTimeout(() => reject(new Error('Error3')), 1000))
+  ])
+    .then(console.log) 
+    .error(console.log);    // Error: Error3
+  ```
+<br>
+
+### 6.4. Promise.allSettled
+- 이 메서드는 프로미스를 요소로 갖는 배열 등의 이터러블을 인수로 전달받음
+  - 이 전달받은 프로미스가 모두 settled 상태(비동기 처리가 수행된 상태, fulfilled 또는 rejected 상태)가 되면 처리 결과를 배열로 반환
+- ES11(ECMAScript 2020)에 도입 
+  ```js
+  Promise.allSettled([
+    new Promise(resolve => setTimeout(() => resolve(1), 2000)),
+    new Promise((_, reject) => setTimeout(() => reject(new Error('Error')), 1000))
+  ])
+    .then(console.log);
+  /*
+  [
+    {status: "fulfilled", value: 1},
+    {status: "rejected", reason: Error: Error at <anonymous>:3:54}
+  ]
+  */
+  ```
+  - Promise.allSettled 메서드가 반환한 배열에는 fulfilled 또는 rejected 상태와 상관없이 Promise.allSettled 메서드가 인수로 전달받은 모든 프로미스들의 처리 결과가 모두 담겨 있음
+- 프로미스 처리 결과를 나타내는 객체
+  - 프로미스가 fulfilled 상태인 경우: 비동기 처리 상태를 나타내는 status 프로퍼티와 처리 결과를 나타내는 value 프로퍼티를 가짐
+  - 프로미스가 rejected 상태인 경우: 비동기 처리 상태를 나타내는 status 프로퍼티와 에러를 나타내는 reason 프로퍼티를 가짐
+
+<br>
+<br>
+
+## 7. 마이크로태스크 큐
+```js
+setTimeout(() => console.log(1), 0);
+
+Promise.resolve()
+  .then(() => console.log(2))
+  .then(() => console.log(3));
+```
+위의 코드를 살펴보면,
+- 프로미스의 후속 처리 메서드도 비동기로 동작하므로 1 -> 2 -> 3 순으로 출력될 것처럼 보이지만 2 -> 3 -> 1 순으로 출력
+  - 이유는 프로미스의 후속 처리 메서드의 콜백 함수는 태스크 큐가 아니라 마이크로태스크 큐에 저장
+- 태스크 큐와 마이크로태스크 큐는 별도의 큐
+  - 마이크로태스크 큐에는 프로미스의 후속 처리 메서드의 콜백 함수가 일시 저장
+  - 태스크 큐에는 그 외의 비동기 함수의 콜백 함수나 이벤트 핸들러에 일시 저장
+- **마이크로태스크 큐는 태스크 큐보다 우선순위가 높음**
+  - 이벤트 루프는 콜 스택이 비면 먼저 마이크로태스크 큐에서 대기하고 있는 함수를 가져와 실행
+  - 마이크로태스크 큐가 비면 태스크 큐에서 대기하고 있는 함수를 가져와 실행
+
+<br>
+<br>
+
+## 8. fetch
+- fetch 함수는 XMLHttpRequest 객체와 마찬가지로 HTTP 요청 전송 기능을 제공하는 클라이언트 사이드 Web API
+- fetch 함수는 사용법이 간단하고 프로미스를 지원하기 때문에 비동기 처리를 위한 콜백 패턴의 단점에서 자유로움
+- fetch 함수는 HTTP 요청을 전송할 URL과 HTTP 요청 메서드, HTTP 요청 헤더, 페이로드 등을 설정한 객체 전달
+  ```
+  const promise = fetch(url [, options])
+  ```
+- **fetch 함수는 HTTP 응답을 나타내는 Response 객체를 래핑한 Promise 객체를 반환**
+- fetch 함수로 GET 요청 전송
+  - fetch 함수에 첫 번째 인수로 HTTP 요청을 전송할 URL만 전달하면 GET 요청 전송
+  ```js
+  fetch('https://jsonplaceholder.typicode.com/todos/1')
+    .then(response => console.log(response));
+  ```
+  - fetch 함수는 HTTP 응답을 나타내는 Response 객체를 래핑한 프로미스를 반환하므로 후속 처리 메서드 then을 통해 프로미스가 resolve한 Response 객체를 전달받음
+  - Response 객체는 HTTP 응답을 나타내는 다양한 프로퍼티 제공
+- Response.prototype에는 Response 객체에 포함되어 있는 HTTP 응답 몸체를 위한 다양한 메서드를 제공
+  - fetch 함수가 반환한 프로미스가 래핑하고 있는 MIME 타입이 application/json인 HTTP 응답 몸체를 취득하려면 Response.prototype.json 메서드 사용
+  - Response.prototype.json 메서드는 Response 객체에서 HTTP 응답 몸체를 취득하여 역직렬화
+  ```JS
+  fetch('https://jsonplaceholder.typicode.com/todos/1')
+    .then(response => response.json())
+    // json은 역직렬화된  HTTP 응답 몸체
+    .then(json => console.log(json));
+  ```
+<br>
+
+- fetch 함수를 사용할 때는 에러 처리에 주의
+  ```js
+  const wrongUrl = 'https://jsonplaceholder.typicode.com/XXX/1';
+
+  // 부적절한 URL이 지정되었기 때문에 404 Not Found 에러 발생
+  fetch(wrongUrl)
+    .then(() => console.log('ok'))
+    .catch(() => console.log('error'));
+  ```
+  - 부적절한 URL이 지정되었기 때문에 404 Not Found 에러가 발생하고 catch 후속 처리 메서드에 의해 'error'가 출력될 것처럼 보이지만 'ok' 출력
+  - **fetch 함수가 반환하는 프로미스는 기본적으로 404 Not Found나 500 Internal Server Error와 같은 HTTP 에러가 발생해도 에러를 reject 하지 않고 불리언 타입의 ok 상태를 false로 설정한 Response 객체를 resolve**
+  - **오프라인 등의 네트워크 장애나 CORS 에러에 의해 요청이 완료되지 못한 경우에만 프로미스를 reject**
+- fetch 함수를 사용할 때는 fetch 함수가 반환한 프로미스가 resolve한 불리언 타입의 ok 상태를 확인해 명시적으로 에러 처리 필요
+  ```js
+  const wrongUrl = 'https://jsonplaceholder.typicode.com/XXX/1';
+
+  // 부적절한 URL이 지정되었기 때문에 404 Not Found 에러 발생
+  fetch(wrongUrl)
+    // response는 HTTP 응답을 나타내는 Response 객체
+    .then(response => {
+      if (!response.ok) throw new Error(response.statusText);
+      return response.json();
+    })
+    .then(todo => console.log(todo))
+    .catch(err => console.error(err));
+  ```
+- axios는 모든 HTTP 에러를 reject하는 프로미스를 반환하기 때문에 모든 에러를 catch에서 처리 가능
+  - axios는 인터셉터, 요청 설정 등 fetch보다 다양한 기능 지원
+- fetch 함수를 통해 HTTP 요청 전송
+  - fetch 함수에 첫 번째 인수로 HTTP 요청을 전송할 URL과 두 번째 인수로 HTTP 요청 메서드, HTTP 요청 헤더, 페이로드 등을 설정한 객체 전달
+  ```JS
+  const request = {
+    get(url) {
+      return fetch(url);
+    },
+    post(url, payload) {
+      return fetch(url, {
+        method: 'POST',
+        headers: { 'content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+    },
+    patch(url, payload) {
+      return fetch(url, {
+        method: 'PATCH',
+        headers: {'content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+    },
+    delete(url) {
+      return fetch(url, { method: 'DELETE' });
+    }
+  };
+  ```
+
+<br>
+
+**(1) GET 요청**
+```js
+request.get('https://jsonplaceholder.typicode.com/todos/1')
+  .then(response => {
+    if (!reponse.ok) throw new Error(reponse.statusText);
+    return response.json();
+  })
+  .then(todos => console.log(todos))
+  .catch(err => console.error(err));
+// {userId: 1, id: 1, title: "delectus aut autem", completed: false}
+```
+
+<br>
+
+**(2) POST 요청**
+```js
+request.post('https://jsonplaceholder.typicode.com/todos/1', {
+  userId: 1,
+  title: 'JavaScript',
+  completed: false
+}).then(response => {
+    if (!reponse.ok) throw new Error(reponse.statusText);
+    return response.json();
+  })
+  .then(todos => console.log(todos))
+  .catch(err => console.error(err));
+// {userId: 1, title: "JavaScript", completed: false, id: 201}
+```
+
+<br>
+
+**(3) PATCH 요청**
+```js
+request.patch('https://jsonplaceholder.typicode.com/todos/1', {
+  completed: true
+}).then(response => {
+    if (!reponse.ok) throw new Error(reponse.statusText);
+    return response.json();
+  })
+  .then(todos => console.log(todos))
+  .catch(err => console.error(err));
+// {userId: 1, id: 1, title: "delectus aut autem", completed: true}
+```
+
+<br>
+
+**(4) DELETE 요청**
+```js
+request.delete('https://jsonplaceholder.typicode.com/todos/1')
+  .then(response => {
+    if (!reponse.ok) throw new Error(reponse.statusText);
+    return response.json();
+  })
+  .then(todos => console.log(todos))
+  .catch(err => console.error(err));
+// {}
+```
+
+<br>
+<br>
