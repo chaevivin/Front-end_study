@@ -58,6 +58,7 @@
 - [Ajax](https://github.com/chaevivin/JavaScript_study/blob/main/contents/ajax.md)
 - [REST API](https://github.com/chaevivin/JavaScript_study/blob/main/contents/REST_API.md)
 - [프로미스 (Promise)](https://github.com/chaevivin/JavaScript_study/blob/main/contents/promise.md) 
+- [제너레이터와 async/await (generator and async/await)](https://github.com/chaevivin/JavaScript_study/blob/main/contents/generator%26async_await.md)
 
 <br>
 <br>
