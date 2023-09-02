@@ -73,6 +73,7 @@
   - [REST API](https://github.com/chaevivin/Front-end_study/blob/main/JavaScript/REST_API.md)
   - [프로미스 (Promise)](https://github.com/chaevivin/Front-end_study/blob/main/JavaScript/promise.md) 
   - [제너레이터와 async/await (generator and async/await)](https://github.com/chaevivin/Front-end_study/blob/main/JavaScript/generator%26async_await.md)
+  - [에러 처리 (error handling)](https://github.com/chaevivin/Front-end_study/blob/main/JavaScript/error_handling.md)
 
   <br>
 
