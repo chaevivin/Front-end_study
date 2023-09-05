@@ -102,7 +102,7 @@
 
   </div>
 
-  - Redux 공식 문서를 공부한 내용을 정리하였습니다.
+  - Redux 공식 문서를 공부한 내용을 번역 및 정리하였습니다.
   - Redux 공식 문서 외에도 다른 자료들을 참고하여 내용을 보강하였습니다.
   - Redux는 상태를 관리할 수 있는 라이브러리로, 애플리케이션에서 상태가 언제, 어디서, 왜, 어떻게 업데이트 되었는지 쉽게 알 수 있도록 도와줍니다.
   - React에서 복잡한 상태 관리로 어려움을 겪어 공부를 진행하고 있습니다.
@@ -111,6 +111,7 @@
 
   ### 1. 순서
   - [Redux 시작하기 (Start Redux)](https://github.com/chaevivin/Front-end_study/blob/main/Redux/Start_Redux.md)
+  - [Redux의 개요와 개념 (Redux Overview and Concepts)](https://github.com/chaevivin/Front-end_study/blob/main/Redux/Redux_Overview_and_Concepts.md)
 
   <br>
 
