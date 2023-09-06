@@ -24,7 +24,7 @@
 
   </div>
 
-  - 책 모던 자바스크립트 Deep Dive를 읽고 공부한 자바스크립트 내용을 정리하였습니다.
+  - 책 `모던 자바스크립트 Deep Dive`를 읽고 공부한 자바스크립트 내용을 정리하였습니다.
   - 매일 한 챕터씩 내용을 업데이트하였습니다. (내용이 많으면 2-3번에 나눠 업데이트)
   - 웹 개발에서 중요한 언어는 자바스크립트입니다. 자바스크립트의 문법을 제대로 공부하여 조금 더 유연하게 코딩하기 위해 공부를 진행하고 있습니다.
 
@@ -117,6 +117,41 @@
 
   ### 2. 참고
   - [Redux 공식문서](https://ko.redux.js.org/)
+
+  <br>
+  <br>
+  
+</details>
+
+<details>
+  <summary><span style="font-weight: bold">TypeScript</span></summary>
+
+  <div align="center">
+
+  <br>
+
+  ![34](https://github.com/chaevivin/Front-end_study/assets/83055813/db63a9c6-8f3e-43a3-a15f-b23346cc37d8)
+
+  <br>
+
+  ## TypeScript 공부
+
+  </div>
+
+  - 책 `쉽게 시작하는 타입스크립트`와 TypeScript 공식 문서를 공부한 내용을 정리하였습니다.
+  - TypeScript는 JavaScript에 타입을 더한 언어로 안정성을 더해 예상치 못한 오류를 예방하고 코드의 가독성을 높여줍니다.
+  - JavaScript에서 변수를 사용하거나 함수를 호출할 때 타입이 없어 예상한대로 코드를 작성하지 못하는 어려움을 겪어 공부를 진행하고 있습니다.
+
+  <br>
+
+  ### 1. 순서
+  - [타입스크립트의 소개와 배경 (Introduction and background)](https://github.com/chaevivin/Front-end_study/blob/main/TypeScript/Introduction_and_background.md)
+
+  <br>
+
+  ### 2. 참고
+  - [쉽게 시작하는 타입스크립트 (장기효 지음 | 길벗)](https://product.kyobobook.co.kr/detail/S000202595007)
+  - [TypeScript 공식문서](https://www.typescriptlang.org/ko/docs/handbook/typescript-in-5-minutes.html)
 
   <br>
   <br>
