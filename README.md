@@ -146,6 +146,7 @@
 
   ### 1. 순서
   - [타입스크립트의 소개와 배경 (Introduction and background)](https://github.com/chaevivin/Front-end_study/blob/main/TypeScript/Introduction_and_background.md)
+  - [타입스크립트의 기초: 변수와 함수의 타입 정의 (Type definition for variable and function)](https://github.com/chaevivin/Front-end_study/blob/main/TypeScript/Type_definition.md)
 
   <br>
 
