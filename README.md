@@ -149,6 +149,7 @@
   - [타입스크립트의 기초: 변수와 함수의 타입 정의 (Type definition for variable and function)](https://github.com/chaevivin/Front-end_study/blob/main/TypeScript/Type_definition.md)
   - [인터페이스 (Interface)](https://github.com/chaevivin/Front-end_study/blob/main/TypeScript/Interface.md)
   - [연산자를 사용한 타입 정의 (Type definition using operators)](https://github.com/chaevivin/Front-end_study/blob/main/TypeScript/Type_definition_using_operators.md)
+  - [타입 별칭 (Type alias)](https://github.com/chaevivin/Front-end_study/blob/main/TypeScript/Type_alias.md)
 
   <br>
 
