@@ -152,6 +152,7 @@
   - [타입 별칭 (Type alias)](https://github.com/chaevivin/Front-end_study/blob/main/TypeScript/Type_alias.md)
   - [이넘 (Enum)](https://github.com/chaevivin/Front-end_study/blob/main/TypeScript/Enum.md)
   - [클래스 (Class)](https://github.com/chaevivin/Front-end_study/blob/main/TypeScript/Class.md)
+  - [제네릭 (Generic)](https://github.com/chaevivin/Front-end_study/blob/main/TypeScript/Generic.md)
 
   <br>
 
