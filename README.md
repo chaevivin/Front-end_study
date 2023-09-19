@@ -154,6 +154,7 @@
   - [클래스 (Class)](https://github.com/chaevivin/Front-end_study/blob/main/TypeScript/Class.md)
   - [제네릭 (Generic)](https://github.com/chaevivin/Front-end_study/blob/main/TypeScript/Generic.md)
   - [실습 프로젝트: 전화번호부 앱 (PhoneBook)](https://github.com/chaevivin/Front-end_study/blob/main/TypeScript/PhoneBook.md)
+  - [타입 추론 (Type Interface)](https://github.com/chaevivin/Front-end_study/blob/main/TypeScript/Type_Interface.md)
 
   <br>
 
