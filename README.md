@@ -156,6 +156,7 @@
   - [실습 프로젝트: 전화번호부 앱 (PhoneBook)](https://github.com/chaevivin/Front-end_study/blob/main/TypeScript/PhoneBook.md)
   - [타입 추론 (Type Interface)](https://github.com/chaevivin/Front-end_study/blob/main/TypeScript/Type_Interface.md)
   - [타입 단언 (Type assertion)](https://github.com/chaevivin/Front-end_study/blob/main/TypeScript/Type_assertion.md)
+  - [타입 가드 (Type guard)](https://github.com/chaevivin/Front-end_study/blob/main/TypeScript/Type_guard.md)
 
   <br>
 
