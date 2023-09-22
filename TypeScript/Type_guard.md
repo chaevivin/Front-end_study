@@ -232,3 +232,245 @@ function updateInput(textInput: number | string | boolean) {
 
 <br>
 <br>
+
+## 4. 타입 가드 함수
+- 타입 가드 함수: 타입 가드 역할을 하는 함수를 의미한다.
+- 객체 유니언 타입 중 하나를 구분하는 데 사용하며, in 연산자와 역할을 같지만 좀 더 복잡한 경우에도 사용할 수 있다.
+- 타입 가드 함수는 is 연산자를 사용하여 여러 개의 타입 중 하나로 구분한다.
+  ```ts
+  function isPerson(someone: Person | Developer): someone is Person {
+    // ...
+  }
+  ```
+  - Person 타입과 Developer 타입 중 Person 타입으로 구분하는 타입 가드 함수이다. 
+
+<br>
+
+### 4.1. 타입 가드 함수 예시
+- in 연산자로 타입 가드
+  ```ts
+  interface Person {
+    name: string;
+    age: number;
+  }
+
+  interface Developer {
+    name: string;
+    skill: string;
+  }
+
+  function greet(someone: Person | Developer) {
+    if ("age" in someone) {
+      console.log("사람의 나이는 ", someone.age);
+    } else {
+      console.log("개발자의 스킬은 ", someone.skill);
+    }
+  }
+  ```
+  - in 연산자를 사용하여 타입 가드를 적용하였다.
+  - greet() 함수는 파라미터가 Person 타입일 때는 나이를 출력하고, Developer 타입일 대는 스킬을 출력한다.
+- 타입 가드 함수
+  ```ts
+  function isPerson(someone: Person | Developer): someone is Person {
+    return (someone as Person).age !== undefined;
+  }
+  ```
+  - isPerson() 함수는 타입 가드 함수로, 파라미터는 Person 타입과 Developer 타입의 유니언 타입으로 정의되어있다.
+  - 유니언 타입으로 정의된 파라미터는 별도의 타입 가드를 적용하지 않으면 함수 내부에서 공통 속성만 접근할 수 있다.
+  - 따라서 타입 단언(as)으로 Person 타입으로 추론을 강제한 후에 age 속성에 접근한다. 
+  - 함수의 반환 타입은 is 연산자를 사용하여 someone 파라미터가 Person 타입인지 체크한다.
+  - 타입 가드 함수의 역할
+    - **Person과 Developer 타입의 값을 받아 Person 타입의 속성이 있는지 확인한 후 속성이 있다면 Person 타입으로 간주하라.**
+- 기존 코드에 적용
+  ```ts
+  interface Person {
+    name: string;
+    age: number;
+  }
+
+  interface Developer {
+    name: string;
+    skill: string;
+  }
+
+  function isPerson(someone: Person | Developer): someone is Person {
+    return (someone as Person).age !== undefined;
+  }
+
+  function greet(someone: Person | Developer) {
+    if (isPerson(someone)) {
+      console.log("사람의 나이는 ", someone.age);
+    } else {
+      console.log("개발자의 스킬은 ", someone.skill);
+    }
+  }
+  ```
+  - greet() 함수의 if문에서 isPerson() 타입 가드 함수를 사용해서 someone 파라미터의 타입이 Person 타입인지 아닌지 구분한다.
+  - isPerson() 타입 가드 함수의 결과는 Person 타입이므로 if 문 안에서는 someone 파라미터가 Person 타입으로 추론되고, else 문에서는 isPerson() 함수 조건을 만족하지 않기 때문에 Developer 타입으로 간주된다.
+
+<br>
+
+### 4.2. 복잡한 경우의 타입 가드 예시
+- 타입 가드 함수가 꼭 필요한 경우
+  ```ts
+  interface Hero {
+    name: string;
+    nickname: string;
+  }
+
+  interface Person {
+    name: string;
+    age: number;
+  }
+
+  interface Developer {
+    name: string;
+    age: string;
+    skill: string;
+  }
+
+  function greet(someone: Hero | Person | Developer){
+    if ('age' in someone) {
+      console.log(someone.age);
+    }
+  }
+  ```
+  - Hero, Person, Developer 인터페이스 타입을 각각 선언하고, greet() 함수의 파라미터에 유니언 타입으로 연결하였다.
+  - greet() 함수에서 파라미터가 Person 타입인 경우 나이를 출력할 수는 있지만 Developer 타입에도 age 속성이 있기 때문에 숫자 관련 내장 API나 내장 속성은 사용할 수 없다. -> in 연산자로는 원하는 타입으로 구분할 수 없다.
+  ```ts
+  function isPerson(someone: Hero | Person | Developer): someone is Person {
+    return typeof (someone as Person).age === 'number';
+  }
+
+  function greet(someone: Hero | Person | Developer){
+    if (isPerson(someone)) {
+      console.log(someone.age);
+    }
+  }
+  ```
+  - isPerson() 함수는 Hero, Person, Developer 유니언 타입을 파라미터로 받고, Person 타입인지 아닌지를 결과값으로 반환한다.
+  - isPerson() 함수는 인자로 받은 객체의 age 속성 타입이 number면 Person 타입이라고 구분해 주는 타입 가드 함수이다.
+  - greet() 함수의 if 문 안에서 someone 파라미터 타입은 Person 타입으로 간주된다.
+    - someone.age 속성의 타입은 number이다.
+    - age 속성으로 number 관련 내장 API나 내장 속성에 접근할 수 있다. 
+- 타입 가드 함수를 사용하면 여러 가지 타입이 얽혀 있을 때 쉽게 타입을 구분할 수 있다.
+
+<br>
+<br>
+
+## 5. 구별된 유니언 타입
+- **구별된 유니언 타입(discrimiated unions)**: 유니언 타입을 구성하는 여러 개의 타입을 특정 속성의 유무가 아니라 특정 속성 값으로 구분하는 타입 가드 문법을 의미한다.
+  ```ts
+  interface Person {
+    name: string;
+    age: number;
+    industry: 'common';
+  }
+
+  interface Developer {
+    name: string;
+    age: string;
+    industry: 'tech';
+  }
+  ```
+  - Person 타입과 Developer 타입의 속성을 모두 동일하게 name, age, industry로 선언하였다.
+  - 해당 타입 2개를 갖는 유니언 타입을 특정 타입으로 걸러내는 방법
+    - 두 타입의 속성 이름은 모두 같기 때문에 in 연산자는 사용할 수 없다.
+    - 구별된 유니언 타입을 사용할 수 있다.
+      ```ts
+      function greet(someone: Person | Developer) {
+        if (someone.industry === 'common') {
+          // ...
+        }
+      }
+      ```
+      - if문 안은 industry 속성 값이 'common', 즉 someone의 타입이 Person이다.
+- 속성의 유뮤가 아니라 속성의 문자열 타입 값을 비교해서 타입을 구분해 내는 것이 구별된 유니언 타입이다.
+
+<br>
+<br>
+
+## 6. switch문과 연산자
+- 타입 가드는 if문 말고도 switch문이나 비교, 논리 연산자로도 적용할 수 있다.
+
+<br>
+
+### 6.1. switch문
+- switch문으로 타입 가드 적용하기
+  ```ts
+  interface Person {
+    name: string;
+    age: number;
+    industry: 'common';
+  }
+
+  interface Developer {
+    name: string;
+    age: string;
+    industry: 'tech';
+  }
+
+  function greet(someone: Person | Developer) {
+    switch(someone.industry) {
+      case 'common':
+        console.log(someone.age.toFixed(2));
+        break;
+      case 'tech':
+        console.log(someone.age.split(' '));
+        break;
+    }
+  }
+  ```
+  - someone 파라미터 industry 속성 값이 문자열 common인지 tech인지에 따라 각 case 블록 안 타입은 Person 또는 Developer이다.
+  - switch문 첫 번째 case에서는 industry 속성 값이 common인지 확인하고, 맞다면 해당 case 블록 안 타입은 Person이다.
+  - switch문 두 번째 case에서는 industry 속성 값이 tech인지 확인하고, 맞다면 해당 case 블록 안 타입은 Developer이다.
+  - 만약 Peson과 Developer 타입 중 어느 타입에도 해당되지 않는 조건 값이 존재한다면 에러가 발생한다.
+
+<br>
+
+### 6.2. 논리, 비교 연산자
+- 논리, 비교 연산자로 타입 가드 적용하기
+  ```ts
+  function sayHi(message: string | null) {
+    if (message.length >= 3) {
+      console.log(message);
+    }
+  }
+  ```
+  - 함수에 입력받은 문자열 길이가 3 이상일 때 해당 문자열을 출력해준다.
+  - 프로젝트의 타입스크립트 타입 검사 레벨(strict)을 올리면 에러가 발생한다.
+    - 에러 발생 이유: 파리미터 타입이 string과 null 유니언 타입인데 null 타입이라면 length 속성에 접근할 수 없기 때문이다.
+    - 해결 방법: if문을 쓰거나 타입 단언 문법인 `!`을 사용하거나 논리 연산자를 사용할 수 있다.
+      ```ts
+      function sayHi(message: string | null) {
+        // if문
+        if (message === null) {
+          return;
+        }
+
+        if (message.length >= 3) {
+          console.log(message);
+        }
+      }
+      ```
+      - message가 null일 대 함수를 반환해 주면 첫 번째 if문 아래는 모두 message가 string 타입으로 추론된다.
+      ```ts
+      function sayHi(message: string | null) {
+        if (message!.length >= 3) {
+          console.log(message);
+        }
+      }
+      ```
+      - message 값이 null이 아니라는 의미의 `!` 연산자를 붙였기 때문에 string 타입으로 간주된다. string 타입으로 간주되면 length 속성에 접근할 수 있다.
+      ```ts
+      function sayHi(message: string | null) {
+        if (message && message.length >= 3) {
+          console.log(message);
+        }
+      }
+      ```
+      - `&&` 연산자는 AND 연산자로 A이면서 B일 때 true를 반환한다.
+      - if문에 message가 있으면(message가 null이 아니면) message의 length 속성이 3 이상인지 체크한다.
+
+<br>
+<br>
