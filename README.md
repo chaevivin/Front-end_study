@@ -112,6 +112,7 @@
   ### 1. 순서
   - [Redux 시작하기 (Start Redux)](https://github.com/chaevivin/Front-end_study/blob/main/Redux/Start_Redux.md)
   - [Redux의 개요와 개념 (Redux Overview and Concepts)](https://github.com/chaevivin/Front-end_study/blob/main/Redux/Redux_Overview_and_Concepts.md)
+  - [Redux의 앱 구조 (Redux App Structure)](https://github.com/chaevivin/Front-end_study/blob/main/Redux/Redux_App_Structure.md)
 
   <br>
 
