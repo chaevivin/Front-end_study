@@ -158,6 +158,7 @@
   - [타입 추론 (Type Interface)](https://github.com/chaevivin/Front-end_study/blob/main/TypeScript/Type_Interface.md)
   - [타입 단언 (Type assertion)](https://github.com/chaevivin/Front-end_study/blob/main/TypeScript/Type_assertion.md)
   - [타입 가드 (Type guard)](https://github.com/chaevivin/Front-end_study/blob/main/TypeScript/Type_guard.md)
+  - [타입 호환 (Type compatibility)](https://github.com/chaevivin/Front-end_study/blob/main/TypeScript/Type_compatibility.md)
 
   <br>
 
