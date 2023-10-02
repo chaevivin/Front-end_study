@@ -159,6 +159,7 @@
   - [타입 단언 (Type assertion)](https://github.com/chaevivin/Front-end_study/blob/main/TypeScript/Type_assertion.md)
   - [타입 가드 (Type guard)](https://github.com/chaevivin/Front-end_study/blob/main/TypeScript/Type_guard.md)
   - [타입 호환 (Type compatibility)](https://github.com/chaevivin/Front-end_study/blob/main/TypeScript/Type_compatibility.md)
+  - [타입 모듈 (Type module)](https://github.com/chaevivin/Front-end_study/blob/main/TypeScript/Type_module.md)
 
   <br>
 
