@@ -160,6 +160,7 @@
   - [타입 가드 (Type guard)](https://github.com/chaevivin/Front-end_study/blob/main/TypeScript/Type_guard.md)
   - [타입 호환 (Type compatibility)](https://github.com/chaevivin/Front-end_study/blob/main/TypeScript/Type_compatibility.md)
   - [타입 모듈 (Type module)](https://github.com/chaevivin/Front-end_study/blob/main/TypeScript/Type_module.md)
+  - [유틸리티 타입 (Utility type)](https://github.com/chaevivin/Front-end_study/blob/main/TypeScript/Utility_type.md)
 
   <br>
 
